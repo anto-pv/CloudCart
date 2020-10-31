@@ -9,11 +9,13 @@ app.use(express.json());
 app.get("/api/v1/shops", async (req,res) =>{
     try{
         const results = await db.query("SELECT * FROM seller");
+        const services = await db.query(`SELECT * FROM product WHERE producttime != "00:00:00`);
         res.status(200).json({
             status: "success",
             results: results.rows.length,
             data: {
-                shops: results.rows
+                shops: results.rows,
+                services: services.row,
             },
         });
     }catch(err){

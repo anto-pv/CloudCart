@@ -1,6 +1,6 @@
 import React,{useEffect, useContext} from 'react';
 import  ShopFinder from '../apis/ShopFinder'
-import { ShopContext } from '../context/ShopContex';
+import { ShopContext } from '../context/ShopContext';
 import {useHistory} from "react-router-dom";
 const Shops = (props) => {
     const {shops, setShops} = useContext(ShopContext);
@@ -21,17 +21,17 @@ const Shops = (props) => {
     };
     return(
         <div className="container">
-            {shops && shops.map(shop =>{ 
-                return(<div className="card" onClick={() => handleshopSelect(shop.id)} key={shop.id}>
-                            <div className="card-header">{restaurant.name}</div>
-                            <div className="card-body">{restaurant.detail}</div>
-                            <button onClick={(e)=>handleUpdate(e, restaurant.id)} className="btn btn-warning">Update</button>
-                            </td>
-                            <td>
-                            <button onClick={(e) => handleDelete(e, restaurant.id)} className="btn btn-danger">Delete</button>
-                            </td>
+            <div className="card-deck">
+                {shops  && shops.map(shop =>{ 
+                    return(<div  className="card border-dark mb-4" style={{width:"18rem"}} onClick={() => handleShopSelect(shop.id)} key={shop.id}>
+                            <div className="card-header">{shop.name}</div>
+                            <div className="card-body">{shop.detail}</div> 
+                        </div>
+                    );
+                })}
+            </div>          
         </div>
     );
 };
 
-export default Header;
+export default Shops;
