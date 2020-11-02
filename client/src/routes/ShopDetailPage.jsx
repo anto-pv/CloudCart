@@ -10,7 +10,7 @@ const ShopDetailPage = () => {
     useEffect(()=>{
         const fetchData = async() =>{
             try{
-                const response= await ShopFinder.get(`/${id}`);
+                const response= await ShopFinder.get(`/shops/${id}`);
                 setProducts(response.data.data);
             }catch(err){
                 console.log(err);

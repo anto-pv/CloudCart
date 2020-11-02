@@ -8,7 +8,7 @@ const Shops = (props) => {
     useEffect(()=>{
         const fetchData = async() =>{
             try{
-                const response= await ShopFinder.get("/");
+                const response= await ShopFinder.get("/shops/");
                 setShops(response.data.data.shops);
             }catch(err){
                 console.log(err);

@@ -5,11 +5,12 @@ const db = require("./db");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 //Get all shops
 app.get("/api/v1/shops", async (req,res) =>{
     try{
         const results = await db.query("SELECT * FROM seller");
-        const services = await db.query(`SELECT * FROM product WHERE producttime != "00:00:00`);
+        const services = await db.query(`SELECT * FROM product WHERE producttime !='00:00:00'`);
         res.status(200).json({
             status: "success",
             results: results.rows.length,
@@ -56,20 +57,58 @@ app.post("/api/v1/shops", async (req,res) => {
         console.log(err);
     }
 });
-// Create a customer
-app.post("/api/v1/user", async (req,res) => {
-    try {
+//login
+app.post("/api/v1/user/login", async (req,res) => {
+    let errors = "";
+    const results = await db.query(`SELECT * FROM customer WHERE username = $1`,[req.body.username]);
+    if (results.rows.length > 0){
+        const results = await db.query(`SELECT * FROM customer WHERE password = $1`,[req.body.password]);
+        if (results.rows.length > 0){
+            console.log("dfdergtdre");
+            res.redirect('http://localhost/3000');
+            console.log("dfdergtdxfdgre");
+        }
+    }else{
+        errors = errors.concat("u");
+    };
+});
+//register
+app.post("/api/v1/user/register", async (req,res) => {
+    let {username, email, address, contact, location, password, password2} = req.body;
+    let errors = "";
+    if (!username || ! email || !address || !contact || !location || !password || !password2) {
+        errors = errors.concat("e");
+    }
+    if (password.length < 6) {
+        errors = errors.concat("i");
+    }
+    if (password != password2) {
+        errors = errors.concat("o");
+    }
+    if (errors.length > 0){
+        res.send(errors);
+    }else{
         const results = await db.query(
-            `INSERT INTO customer (username, address, contact, location, password) values($1, $2, $3, $4, $5) returning *`,
-            [req.body.username,req.body.address, req.body.contact, req.body.location, req.body.password]);
-        res.status(201).json({
-            status: "success",
-            data: {
-                user: results.rows[0],
-            },
-        });
-    }catch(err){
-        console.log(err);
+            `SELECT * FROM customer WHERE email = $1 && username = $2`,
+            [email,username]);
+        if (results.rows.length > 0){
+            errors = errors.concat("u");
+        }else{
+            try {
+                const results = await db.query(
+                    `INSERT INTO customer (username, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
+                    [username, email, address, contact, location, password]);
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: results.rows[0],
+                    },
+                });
+            }catch(err){
+                console.log(err);
+            }
+        }
+        res.send(errors);
     }
 });
 //add product

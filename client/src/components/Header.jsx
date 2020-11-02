@@ -1,7 +1,12 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import logo from '../images/logo_new.png';
 
 const Header = () => {
+    let history = useHistory();
+    const logout =()=>{
+        history.push("/user/logout")
+    };
     return(        
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="/"><img src={logo} alt="Cloudcart" height="150px" width="200px" class="logo"/>
@@ -19,7 +24,7 @@ const Header = () => {
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <button type="button" class="btn btn-outline-dark" id="reg">Register</button>
-                <button type="button" class="btn btn-outline-dark" onclick="Login()">Login</button>
+                <button type="button" class="btn btn-outline-dark" onclick={logout}>Logout</button>
             </div>
         </nav>
     );

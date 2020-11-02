@@ -27,13 +27,15 @@ VALUES (101,'apple','Fresh green 1kg',100,'00:00:00',7,TRUE);
 CREATE TABLE customer(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     username VARCHAR(40) NOT NULL,
+    email VARCHAR(50) NOT NULL,
     address VARCHAR(100),
-    contact VARCHAR(20),
+    contact VARCHAR(50),
     location VARCHAR(50) NOT NULL,
-    password VARCHAR(25) NOT NULL
+    password VARCHAR(50) NOT NULL,
+    UNIQUE (email)
 );
-INSERT INTO customer (id,username,address,contact,location,password)
-VALUES (5,'firstuser','Kezhekkemala P o, Kombodinjamakkal','9874793409','Kombodinjamakkal','iamfirstuser');
+INSERT INTO customer (id,username,email,address,contact,location,password)
+VALUES (5,'firstuser','antopv19@gmail.com','Kezhekkemala P o, Kombodinjamakkal','9874793409','Kombodinjamakkal','iamfirstuser');
 
 CREATE TABLE timeslot(
     id BIGSERIAL NOT NULL PRIMARY KEY,
