@@ -40,10 +40,11 @@ VALUES (5,'firstuser','antopv19@gmail.com','Kezhekkemala P o, Kombodinjamakkal',
 CREATE TABLE timeslot(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     seller INT NOT NULL,
+    opentime TIME NOT NULL,
     totaltime INT NOT NULL,
     numbslot INT NOT NULL,
     live BOOLEAN,
     FOREIGN KEY(seller) REFERENCES seller(id)
 );
-INSERT INTO timeslot (id,seller,totaltime,numbslot,live)
-VALUES (15,7,10,5,TRUE);
+INSERT INTO timeslot (id,seller,opentime,totaltime,numbslot,live)
+VALUES (15,'09:00:00',7,10,5,TRUE);

@@ -62,15 +62,22 @@ app.post("/api/v1/user/login", async (req,res) => {
     let errors = "";
     const results = await db.query(`SELECT * FROM customer WHERE username = $1`,[req.body.username]);
     if (results.rows.length > 0){
-        const results = await db.query(`SELECT * FROM customer WHERE password = $1`,[req.body.password]);
-        if (results.rows.length > 0){
-            console.log("dfdergtdre");
-            res.redirect('http://localhost/3000');
-            console.log("dfdergtdxfdgre");
-        }
+        const sresults = await db.query(`SELECT * FROM customer WHERE password = $1`,[req.body.password]);
+        if (sresults.rows.length == 1){
+            res.status(201).json({
+                status: "success",
+                data: {
+                    user: sresults.rows[0],
+                },
+            });
+        }else{
+            errors= errors.concat("i");
+            console.log("fdhxdh")
+        };
     }else{
         errors = errors.concat("u");
     };
+    res.send(errors);
 });
 //register
 app.post("/api/v1/user/register", async (req,res) => {
