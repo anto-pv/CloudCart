@@ -11,6 +11,19 @@ CREATE TABLE seller(
 INSERT INTO seller (id,name,location,servicetime,password)
 VALUES (7,'Cherry Bakers','Kombodinjamakkal','00:05:00','passsword');
 
+CREATE TABLE timeslot(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    seller INT NOT NULL,
+    opentime TIME NOT NULL,
+    totalthr INT NOT NULL,
+    numbslot INT NOT NULL,
+    slots VARCHAR,
+    live BOOLEAN,
+    FOREIGN KEY(seller) REFERENCES seller(id)
+);
+INSERT INTO timeslot (seller,opentime,totaltime,numbslot,slots,live)
+VALUES (1,'09:00:00',7,10,‘10101010101010’,TRUE);
+
 CREATE TABLE product(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(40) NOT NULL,
@@ -18,6 +31,7 @@ CREATE TABLE product(
     price INT,
     producttime TIME,
     seller INT NOT NULL,
+    tcount INT,
     live BOOLEAN,
     FOREIGN KEY(seller) REFERENCES seller(id)
 );
@@ -37,14 +51,10 @@ CREATE TABLE customer(
 INSERT INTO customer (id,username,email,address,contact,location,password)
 VALUES (5,'firstuser','antopv19@gmail.com','Kezhekkemala P o, Kombodinjamakkal','9874793409','Kombodinjamakkal','iamfirstuser');
 
-CREATE TABLE timeslot(
+CREATE TABLE cart(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    seller INT NOT NULL,
-    opentime TIME NOT NULL,
-    totaltime INT NOT NULL,
-    numbslot INT NOT NULL,
-    live BOOLEAN,
-    FOREIGN KEY(seller) REFERENCES seller(id)
-);
-INSERT INTO timeslot (id,seller,opentime,totaltime,numbslot,live)
-VALUES (15,'09:00:00',7,10,5,TRUE);
+    user BIGINT NOT NULL,
+    product BIGINT NOT NULL,
+    pcount INT NOT NULL,
+    slotnumber
+)

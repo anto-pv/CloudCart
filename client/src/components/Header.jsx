@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AuthApi from '../apis/AuthApi';
 import logo from '../images/logo_new.png';
 import Cookies from 'js-cookie';
+import { ShopContext } from '../context/ShopContext';
 const Header = () => {
+    const {user, setUser} = useContext(ShopContext);
     const Auth = React.useContext(AuthApi);
     const logout =()=>{
         Auth.setAuth(false);
-        Cookies.remove();
+        Cookies.remove(user.id);
     };
     return(        
         <nav className="navbar navbar-expand-lg navbar-light bg-light">

@@ -1,7 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import Home from './routes/Home';
-import UpdateProduct from "./routes/UpdateProduct";
 import ShopDetailPage from "./routes/ShopDetailPage";
 import ProductPage from "./routes/ProductPage";
 import { ShopContextPrrovider } from './context/ShopContext';
@@ -10,8 +9,12 @@ import Login from './routes/Login';
 import Cookies from 'js-cookie';
 //login
 import AuthApi from "./apis/AuthApi";
+import FrontPage from './routes/CommercialFront';
+import Cart from './routes/Cart';
+import SellerDash from './routes/SellerDash';
 
 const App = () => {
+
     const [auth,setAuth] = React.useState(false);
     const readCookie = () => {
         const user = Cookies.get("user");
@@ -39,11 +42,13 @@ const Routes = () =>{
     return(
         <Switch>
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
-            <ProtectedRoute exact path="/" auth={Auth.auth} component ={Home}/>
-            <Route exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
-            <Route exact path="/shops/:id/update" auth={Auth.auth} component ={UpdateProduct}/>
-            <Route exact path="/product/:id/" auth={Auth.auth} component ={ProductPage}/>
+            <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
+            <Route exact path="/" component ={FrontPage}/>
+            <Route exact path="/shops/:id" component ={ShopDetailPage}/>
+            <Route exact path="/shops/:id/dash" component ={SellerDash}/>
+            <Route exact path="/product/:id/"  component ={ProductPage}/>
             <Route exact path="/user/register" component ={Register}/>
+            <Route exact path="/user/:id/cart" component = {Cart}/>
         </Switch>
     );
 };
@@ -66,11 +71,11 @@ const ProtectedLogin = ({auth,component:Component,...rest}) =>{
     return(
         <Route
         {...rest}
-        render ={()=>!auth? (
+        render ={()=>(!auth)? (
             <Component/>
         ):
             (
-                <Redirect to="/"/>
+                <Redirect to="/Home"/>
             )
     }
         />

@@ -17,7 +17,7 @@ const ShopDetailPage = () => {
             };
         };
         fetchData();
-    }, []);
+    },[]);
     //const handleProductSelect = (id) => {
        // history.push(`/products/${id}`);
     //};

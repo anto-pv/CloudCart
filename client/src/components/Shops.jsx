@@ -15,7 +15,7 @@ const Shops = (props) => {
             };
         };
         fetchData();
-    }, []);
+    },[]);
     const handleShopSelect = (id) => {
         history.push(`/shops/${id}`);
     };

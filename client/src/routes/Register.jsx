@@ -21,18 +21,18 @@ const Register = () => {
                 password,
                 password2
             });
-            if (response.data.data==undefined){
+            if (response.data.data===undefined){
                 for (let letter of response.data) {
-                    if (letter=='e'){
+                    if (letter==='e'){
                         alert("Please, Enter all the fields");
                     };
-                    if (letter=='i'){
+                    if (letter==='i'){
                         alert("Password Should be atleast 6 characters");
                     };
-                    if (letter=='o'){
+                    if (letter==='o'){
                         alert("Password don't match");
                     };
-                    if (letter=='u'){
+                    if (letter==='u'){
                         alert("Email is alrady registered or username is taken");
                     };
                 };

@@ -4,9 +4,10 @@ import AuthApi from '../apis/AuthApi';
 import ShopFinder from '../apis/ShopFinder';
 import logo from '../images/logo_new.png';
 import Cookies from 'js-cookie';
-import useContext, { UserContext } from '../context/user';
+import { ShopContext } from '../context/ShopContext';
 const Login = () => {
     const Auth = React.useContext(AuthApi);
+    const {user, setUser} = useContext(ShopContext);
     let history = useHistory();
     const [username, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -17,18 +18,19 @@ const Login = () => {
                 username,
                 password
             });
-            if (Login.data.data==undefined){
+            if (Login.data.data===undefined){
                 for (let letter of Login.data) {
-                    if (letter=='i'){
+                    if (letter==='i'){
                         alert("Password is not correct");
                     };
-                    if (letter=='u'){
+                    if (letter==='u'){
                         alert("Invalid user name,Register if not..");
                     };
                 };
             }else{
+                setUser(Login.data.data.user);
                 Auth.setAuth(true);
-                Cookies.set(Login.data.data.user.username,"loginTrue");
+                Cookies.set(user.id,"loginTrue");
             };
         } catch(err) {
             console.log(err);

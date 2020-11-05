@@ -1,0 +1,99 @@
+.heading{
+  margin-left: 70px;
+  margin-top: 50px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+body{
+  background: url(images/cart1.jpg);
+  background-size: 1700px 800px; 
+  background-repeat: no-repeat;
+  background-color: #eff48e;
+}
+h1{
+  color: #192965;
+  font-size: 60px;
+}
+h5{
+  margin-left: 70px;
+}
+.about{
+  margin-top: 600px;
+  font-size: 19px;
+  color: black;
+  margin-left: 15px;
+}
+.highlights{
+  margin-left: 15px;
+  font-size: 19px;
+}
+.button{
+  margin-left: 70px;
+  margin-top: 25px;
+}
+.login{
+  outline: 1px dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+.col-md-7{
+  position: relative;
+  margin-top: 600px;
+  margin-left: 15px;
+}
+img{
+  margin-left: 20px;
+}
+
+#head2{
+  margin-left: 15px;
+  margin-top: 0px;
+}
+li{
+  margin-left: -3px;
+  font-size: 1.25rem;
+}
+#contact-us{
+  margin-left: 15px;
+  margin-top: 0px;
+}
+.col-md-7{
+  background-color: #eff48e;
+}
+
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+

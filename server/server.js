@@ -60,24 +60,27 @@ app.post("/api/v1/shops", async (req,res) => {
 //login
 app.post("/api/v1/user/login", async (req,res) => {
     let errors = "";
-    const results = await db.query(`SELECT * FROM customer WHERE username = $1`,[req.body.username]);
-    if (results.rows.length > 0){
-        const sresults = await db.query(`SELECT * FROM customer WHERE password = $1`,[req.body.password]);
-        if (sresults.rows.length == 1){
-            res.status(201).json({
-                status: "success",
-                data: {
-                    user: sresults.rows[0],
-                },
-            });
+    try{
+        const results = await db.query(`SELECT * FROM customer WHERE username = $1`,[req.body.username]);
+        if (results.rows.length > 0){
+            const sresults = await db.query(`SELECT * FROM customer WHERE password = $1`,[req.body.password]);
+            if (sresults.rows.length == 1){
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: sresults.rows[0],
+                    },
+                });
+            }else{
+                errors= errors.concat("i");
+            };
         }else{
-            errors= errors.concat("i");
-            console.log("fdhxdh")
+            errors = errors.concat("u");
         };
-    }else{
-        errors = errors.concat("u");
+        res.send(errors);
+    }catch(err){
+        console.log(err);
     };
-    res.send(errors);
 });
 //register
 app.post("/api/v1/user/register", async (req,res) => {
@@ -95,13 +98,11 @@ app.post("/api/v1/user/register", async (req,res) => {
     if (errors.length > 0){
         res.send(errors);
     }else{
-        const results = await db.query(
-            `SELECT * FROM customer WHERE email = $1 && username = $2`,
-            [email,username]);
-        if (results.rows.length > 0){
-            errors = errors.concat("u");
-        }else{
-            try {
+        try{
+            const results = await db.query(`SELECT * FROM customer WHERE email = $1`,[email]);
+            if (results.rows.length > 0){
+                errors = errors.concat("u");
+            }else{
                 const results = await db.query(
                     `INSERT INTO customer (username, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
                     [username, email, address, contact, location, password]);
@@ -111,10 +112,10 @@ app.post("/api/v1/user/register", async (req,res) => {
                         user: results.rows[0],
                     },
                 });
-            }catch(err){
-                console.log(err);
             }
-        }
+        }catch(err){
+            console.log(err);
+        };
         res.send(errors);
     }
 });
@@ -125,7 +126,7 @@ app.post("/api/v1/shops/:id/add", async (req,res) => {
             `INSERT INTO product (name, detail, price, producttime, seller, live) values($1, $2, $3, $4, $5, $6) returning *`,
             [req.body.name, req.body.detail, req.body.price, req.body.producttime, req.params.id, req.body.live]);
         res.status(201).json({
-            status: "sucsess",
+            status: "success",
             data: {
                 product: results.rows[0],
             },
