@@ -2,13 +2,17 @@ import React, { useContext } from 'react';
 import AuthApi from '../apis/AuthApi';
 import logo from '../images/logo_new.png';
 import Cookies from 'js-cookie';
-import { ShopContext } from '../context/ShopContext';
+import { useHistory } from 'react-router-dom';
 const Header = () => {
-    const {user, setUser} = useContext(ShopContext);
+    let history = useHistory();
     const Auth = React.useContext(AuthApi);
     const logout =()=>{
         Auth.setAuth(false);
-        Cookies.remove(user.id);
+        Cookies.remove("user");
+    };
+    const cart =()=>{
+        const id = Cookies.get("user");
+        history.push(`/user/${id}/cart`);
     };
     return(        
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,7 +30,7 @@ const Header = () => {
                     <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" size="60"/>
                     <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
-                <button type="button" className="btn btn-outline-dark" id="reg">Register</button>
+                <button type="button" className="btn btn-outline-dark" onClick={cart}>Cart</button>
                 <button type="button" className="btn btn-outline-dark" onClick={logout}>Logout</button>
             </div>
         </nav>

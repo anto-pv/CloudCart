@@ -24,8 +24,7 @@ app.get("/api/v1/shops", async (req,res) =>{
     };
 });
 //Get a shop
-app.get("/api/v1/shops/:id",async(req,res)=>{
-    console.log(req.params.id);
+app.get("/api/v1/shops/:id", async(req,res)=>{
     try{
         const shop = await db.query(`SELECT * FROM seller WHERE id = $1`,[req.params.id]);
         const products = await db.query(`SELECT * FROM product WHERE seller = $1`,[req.params.id]);
@@ -123,8 +122,8 @@ app.post("/api/v1/user/register", async (req,res) => {
 app.post("/api/v1/shops/:id/add", async (req,res) => {
     try {
         const results = await db.query(
-            `INSERT INTO product (name, detail, price, producttime, seller, live) values($1, $2, $3, $4, $5, $6) returning *`,
-            [req.body.name, req.body.detail, req.body.price, req.body.producttime, req.params.id, req.body.live]);
+            `INSERT INTO product (name, detail, sellername, price, producttime, seller, live) values($1, $2, $3, $4, $5, $6, $7) returning *`,
+            [req.body.name, req.body.detail,req.body.seller, req.body.price, req.body.producttime, req.params.id, req.body.live]);
         res.status(201).json({
             status: "success",
             data: {
@@ -149,7 +148,89 @@ app.put("/api/v1/product/:id", async(req,res) =>{
         console.log(err);
     }
 });
-
+//get shop slots
+app.get("/api/v1/shops/:id/slot", async (req,res) =>{
+    try{
+        const shop = await db.query(`SELECT * FROM seller WHERE id = $1`,[req.params.id]);
+        var length = Math.log(shop.rows[0].numbslot) * Math.LOG10E + 1 | 0;
+        if(length==1){
+            var slot = (shop.rows[0].slots).match(/.{1,1}/g).map(Number);
+        }
+        else if(length==2){
+            var slot = (shop.rows[0].slots).match(/.{1,2}/g).map(Number);
+        }else if(length==3){
+            var slot = (shop.rows[0].slots).match(/.{1,3}/g).map(Number);
+        }else if(length==4){
+            var slot = (shop.rows[0].slots).match(/.{1,4}/g).map(Number);
+        }else{
+            var slot = (shop.rows[0].slots).match(/.{1,5}/g).map(Number);
+        };
+        res.status(200).json({
+            status: "sucsess",
+            data: {
+                shop: shop.rows[0],
+                slots: slot,
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    };
+});
+//adding slot
+app.put("/api/v1/user/:id/cart", async(req,res) =>{
+    try{
+        const results = await db.query(`UPDATE cart SET slot=$1 where (cuser=$2 and id=$6) returning *`, [req.body.name, req.body.detail, req.body.price, req.body.producttime, req.body.live, req.params.id]);
+        res.status(200).json({
+            status: "success",
+            data:{
+                product: results.rows[0],
+            },
+        });
+    }catch(err){
+        console.log(err);
+    }
+});
+//delete a cart item
+app.delete("/api/v1/user/:id/cart/:cid", async (req,res) =>{
+    try{
+        const results = await db.query(`DELETE FROM cart where cid= $1`,[req.params.cid]);
+        res.status(204).json({
+            status: "success",
+        });
+    }catch(err){
+        console.log(err);
+    }
+});
+//cart
+app.get("/api/v1/user/:id/cart", async (req,res) =>{
+    try{//and also make condition on paid=false
+        const results = await db.query(`SELECT * FROM cart left join product on product=product.id WHERE cuser=${req.params.id}`);
+        res.status(200).json({
+            status: "success",
+            data: {
+                carts: results.rows,
+            },
+        });
+    }catch(err){
+        console.log(err);
+    };
+});
+//add to cart 
+app.post("/api/v1/user/:id/cart", async (req,res) => {
+    try {
+        const results = await db.query(
+            `INSERT INTO cart (cuser, product, pcount, seller, paid) values($1, $2, $3, $4, $5) returning *`,
+            [req.params.id, req.body.product, req.body.pcount, req.body.seller, req.body.paid]);
+        res.status(201).json({
+            status: "success",
+            data: {
+                cart: results.rows[0],
+            },
+        });
+    }catch(err){
+        console.log(err);
+    }
+});
 // Delete Product
 
 app.delete("/api/v1/product/:id", async (req,res) =>{

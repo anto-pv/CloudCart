@@ -1,34 +1,38 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import ShopFinder from '../apis/ShopFinder';
+import Header from '../components/Header';
+import Slotl from '../components/Slotl';
+import { ShopContext } from '../context/ShopContext';
 const Slot = () => {
+    const {id} = useParams();
+    const {slot, setSlot} = useContext(ShopContext);
+    useEffect(()=>{
+        const fetchData = async() =>{
+            try{
+                const response= await ShopFinder.get(`/shops/${id}/slot`);
+                setSlot(response.data.data);
+            }catch(err){
+                console.log(err);
+            };
+        };
+        fetchData();
+    },[]);
     return (
         <div>
-            <h6>*Some slots cannot be chosen if number of people to be allowed has reached the limit </h6>
-            <div class="container">	
-                <h4>Choose your time slot</h4>
+            <Header />
+            <h6>*You can go back to cart and purcase more after confirming slot by at least one product payment </h6>
+            <div className="container">
+	            <h4>Choose your time slot</h4>
                 <br/>
-                <ul style="background-color: #e8ffff;">
-                    <li>
-                        <input type="radio" id="9-option" name="selector"/>
-                        <label for="9-option">9:00AM - 10:00AM</label>
-                        <div class="check"></div>
-                    </li>
-                    <li>
-                        <input type="radio" id="10-option" name="selector" onclick="givealert()"/>
-                        <label for="10-option">10:00AM - 11:00AM</label>
-                        <div class="check">
-                            <div class="inside"></div>
-                        </div>
-                    </li>
-                    <li>
-                        <input type="radio" id="11-option" name="selector"/>
-                        <label for="11-option">11:00AM - 12:00PM</label>
-                        <div class="check">
-                            <div class="inside"></div>
-                        </div>
-                    </li>
-                </ul>
-                <button type="button" class="btn btn-success" onclick="Nextpage()" id="proceed">Proceed</button>
-            </div>
+                {slot && (
+                <>
+                <h1 className="text-center display-1">{slot.shop.name}</h1>
+                <Slotl slot={slot.slots} time={slot.shop.opentime}/>
+                </>
+            )}</div>
+        
+                
         </div>
     );
 };

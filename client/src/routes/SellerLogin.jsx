@@ -1,9 +1,9 @@
 import React from 'react';
-const ProductPage = () => {
+const SellerLogin = () => {
     return (
         <div>
 
         </div>
     );
 };
-export default ProductPage;
+export default SellerLogin;

@@ -30,7 +30,8 @@ const Login = () => {
             }else{
                 setUser(Login.data.data.user);
                 Auth.setAuth(true);
-                Cookies.set(user.id,"loginTrue");
+                Cookies.set("user",user.id);
+                console.log("started")
             };
         } catch(err) {
             console.log(err);

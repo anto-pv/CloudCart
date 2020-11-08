@@ -2,16 +2,19 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import Home from './routes/Home';
 import ShopDetailPage from "./routes/ShopDetailPage";
-import ProductPage from "./routes/ProductPage";
 import { ShopContextPrrovider } from './context/ShopContext';
 import Register from './routes/Register';
 import Login from './routes/Login';
 import Cookies from 'js-cookie';
-//login
+//commericalpage-login/register/seller/register/sellerlogin-Home/SellerDash-ShopDetailPage-Cart-(searching for slot&& taking slot which will be temperoty if not checkout)Slot-Cart-Checkout
 import AuthApi from "./apis/AuthApi";
 import FrontPage from './routes/CommercialFront';
 import Cart from './routes/Cart';
 import SellerDash from './routes/SellerDash';
+import Checkout from './routes/Checkout';
+import SellerLogin from './routes/SellerLogin';
+import SellerReg from './routes/SellerReg';
+import Slot from './routes/Slot';
 
 const App = () => {
 
@@ -44,11 +47,14 @@ const Routes = () =>{
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
-            <Route exact path="/shops/:id" component ={ShopDetailPage}/>
+            <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
             <Route exact path="/shops/:id/dash" component ={SellerDash}/>
-            <Route exact path="/product/:id/"  component ={ProductPage}/>
-            <Route exact path="/user/register" component ={Register}/>
-            <Route exact path="/user/:id/cart" component = {Cart}/>
+            <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
+            <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
+            <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>
+            <ProtectedRoute exact path="/user/:id/cart/Checkout" auth={Auth.auth} component = {Checkout}/>
+            <Route exact path="/shops/register" component = {SellerReg}/>
+            <Route exact path="/shops/login" component = {SellerLogin}/>
         </Switch>
     );
 };
