@@ -47,14 +47,14 @@ const Routes = () =>{
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
+            <Route exact path="/shops/register" component = {SellerReg}/>
+            <Route exact path="/shops/login" component = {SellerLogin}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
             <Route exact path="/shops/:id/dash" component ={SellerDash}/>
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
             <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>
             <ProtectedRoute exact path="/user/:id/cart/Checkout" auth={Auth.auth} component = {Checkout}/>
-            <Route exact path="/shops/register" component = {SellerReg}/>
-            <Route exact path="/shops/login" component = {SellerLogin}/>
         </Switch>
     );
 };

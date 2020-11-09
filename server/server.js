@@ -56,6 +56,20 @@ app.post("/api/v1/shops", async (req,res) => {
         console.log(err);
     }
 });
+// Update shop
+app.put("/api/v1/shops/:id", async(req,res) =>{
+    try{
+        const results = await db.query(`UPDATE seller SET slot = $1 where id=$2 returning *`, [req.body.slot, req.params.id]);
+        res.status(200).json({
+            status: "success",
+            data:{
+                shops: results.rows[0],
+            },
+        });
+    }catch(err){
+        console.log(err);
+    }
+});
 //login
 app.post("/api/v1/user/login", async (req,res) => {
     let errors = "";
@@ -76,7 +90,36 @@ app.post("/api/v1/user/login", async (req,res) => {
         }else{
             errors = errors.concat("u");
         };
-        res.send(errors);
+        if(errors.length>0){
+            res.send(errors);
+        };
+    }catch(err){
+        console.log(err);
+    };
+});
+//login seller
+app.post("/api/v1/seller/login", async (req,res) => {
+    let errors = "";
+    try{
+        const results = await db.query(`SELECT * FROM seller WHERE name = $1`,[req.body.name]);
+        if (results.rows.length > 0){
+            const sresults = await db.query(`SELECT * FROM seller WHERE password = $1`,[req.body.password]);
+            if (sresults.rows.length == 1){
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: sresults.rows[0],
+                    },
+                });
+            }else{
+                errors= errors.concat("i");
+            };
+        }else{
+            errors = errors.concat("u");
+        };
+        if(errors.length>0){
+            res.send(errors);
+        };
     }catch(err){
         console.log(err);
     };
@@ -115,7 +158,9 @@ app.post("/api/v1/user/register", async (req,res) => {
         }catch(err){
             console.log(err);
         };
-        res.send(errors);
+        if(errors.length>0){
+            res.send(errors);
+        };
     }
 });
 //add product
@@ -176,19 +221,136 @@ app.get("/api/v1/shops/:id/slot", async (req,res) =>{
         console.log(err);
     };
 });
-//adding slot
+//adding slot to cart by updating from slot page 
 app.put("/api/v1/user/:id/cart", async(req,res) =>{
-    try{
-        const results = await db.query(`UPDATE cart SET slot=$1 where (cuser=$2 and id=$6) returning *`, [req.body.name, req.body.detail, req.body.price, req.body.producttime, req.body.live, req.params.id]);
+    try{const results = await db.query(`select producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is null and c.seller=$2`, [req.params.id, req.body.seller]);
+        console.log(req.params.id, req.body.seller,req.body.slot);
+        let errors = "";
+        var hour=0;
+        var minute=0;
+        var second=0;
+        for(var i=0;i<(results.rows.length);i++){
+            var splitTime= results.rows[i].producttime.split(':');
+            hour = hour+parseInt(splitTime[0]);
+            minute = minute+parseInt(splitTime[1]);
+            hour = hour + minute/60;
+            minute = minute%60;
+            second = second+parseInt(splitTime[2]);
+            minute = minute + second/60;
+            second = second%60;};
+        if(hour>1 && minute>0 && second>0){
+            errors= errors.concat("You can't purchase this much items in this slot")        
+        }else{
+            const sresults = await db.query(`UPDATE cart SET slot=$1 where (cuser=$2 and seller=$3) returning *`, [req.body.slot, req.params.id, req.body.seller]);   
+            res.status(200).json({
+                status: "success",
+                data:{
+                    product: sresults.rows,
+                },
+            });
+        };
+        if(errors.length>0){
+            res.send(errors);
+        };
+    }catch(err){
+        console.log(err);
+    };
+});
+//adding slot to cart by updating from slot page from cart page
+app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
+    try{const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and c.seller=$2`, [req.params.id, req.params.sid]);
+        let unique_array = []
+        for(let i = 0;i < results.rows.length; i++){
+            if(unique_array.indexOf(results.rows[i].slot) == -1){
+                unique_array.push(results.rows[i].slot)
+            }
+        }
+        let errors = "";
+        var hour=0;
+        var minute=0;
+        var second=0;
+        var lock=0;
+        console.log("it's for",unique_array.length);
+        for(var i=0;i<(unique_array.length);i++){
+            console.log("i for loop 1");
+            var splitTime= unique_array[i].split(':');
+            hour = hour+parseInt(splitTime[0]);
+            minute = minute+parseInt(splitTime[1]);
+            hour = hour + minute/60;
+            minute = minute%60;
+            second = second+parseInt(splitTime[2]);
+            minute = minute + second/60;
+            second = second%60;
+            lock=0;
+            for(var j=0;j<(results.rows.length);j++){
+                console.log("i for loop 2");
+                if(results.rows[j].slot==unique_array[i]){
+                    splitTime= results.rows[j].producttime.split(':');
+                    hour = hour+parseInt(splitTime[0]);
+                    minute = minute+parseInt(splitTime[1]);
+                    hour = hour + minute/60;
+                    minute = minute%60;
+                    second = second+parseInt(splitTime[2]);
+                    minute = minute + second/60;
+                    second = second%60;
+                    if(lock==0){
+                        splitTime= results.rows[j].servicetime.split(':');
+                        hour = hour+parseInt(splitTime[0]);
+                        minute = minute+parseInt(splitTime[1]);
+                        hour = hour + minute/60;
+                        minute = minute%60;
+                        second = second+parseInt(splitTime[2]);
+                        minute = minute + second/60;
+                        second = second%60;
+                        lock=1;
+                    };
+                };
+            };
+            const prresults = await db.query(`select producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is null and c.seller=$2`, [req.params.id, req.body.seller]);
+            for(var k=0;k<(prresults.rows.length);k++){
+                console.log("i for loop 3");
+                splitTime= prresults.rows[k].producttime.split(':');
+                hour = hour+parseInt(splitTime[0]);
+                minute = minute+parseInt(splitTime[1]);
+                hour = hour + minute/60;
+                minute = minute%60;
+                second = second+parseInt(splitTime[2]);
+                minute = minute + second/60;
+                second = second%60;
+            };
+            if(hour>1 && minute>0 && second>0){
+                errors= errors.concat("You can't purchase this much items in this slot")        
+            }else{
+                const sresults = await db.query(`UPDATE cart SET slot=$1 where (cuser=$2 and seller=$3) returning *`, [unique_array[i], req.params.id, req.params.sid]);   
+                console.log("success");
+                res.status(200).json({
+                status: "success",
+                data:{
+                    product: sresults.rows,
+                    },
+                });
+                break;
+            };
+        };
+        if(errors.length>0){
+            res.send(errors);
+        };
+    }catch(err){
+        console.log(err);
+    };
+});
+//getting myslots
+app.get("/api/v1/user/:user/cart/:id", async(req,res) =>{
+    try{const results = await db.query(`select c.cid,c.slot,p.name from cart c left join product p  on c.product=p.id where c.cuser=$1 and c.seller=$2 and c.slot is not null`, [req.params.user, req.params.id]);
         res.status(200).json({
             status: "success",
             data:{
-                product: results.rows[0],
-            },
-        });
+                slots: results.rows,
+            }
+        });  
     }catch(err){
         console.log(err);
-    }
+    };
 });
 //delete a cart item
 app.delete("/api/v1/user/:id/cart/:cid", async (req,res) =>{

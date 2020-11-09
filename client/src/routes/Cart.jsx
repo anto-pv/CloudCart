@@ -217,14 +217,27 @@ const Cart = () => {
             console.log(err);
         };
     };
-    const bookslot =(sid) =>{
-        history.push(`/shops/${sid}/slot`)
+    const bookslot =async(sid) =>{
+        //want to modify here that if he have time to buy then buy
+        try {console.log("reached before");
+            const usedslot = await ShopFinder.get(`/user/${id}/cart/${sid}`);
+                if(usedslot.data.data.slots.length>0){
+                    const Login = await ShopFinder.put(`/user/${id}/cart/${sid}`);
+                    console.log("reached before");
+                    history.push(`/shops/${sid}/slot`);
+                    alert("It is booked in your owned slot and redirecting to other shop slots");
+                }else{
+                    history.push(`/shops/${sid}/slot`);
+                };
+        } catch(err) {
+            console.log(err);
+        };
     }
     const cartslot = (slot,seller) =>{
         if(slot==null){
             return(<div><span onClick={() => bookslot(seller)} className="badge badge-danger">No slots</span></div>);
         }else{
-        return(<div><span class="badge badge-succes">{slot}</span></div>);
+        return(<div><span className="badge badge-succes">{slot}</span></div>);
         };
     };
     return (
