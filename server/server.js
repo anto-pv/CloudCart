@@ -59,7 +59,7 @@ app.post("/api/v1/shops", async (req,res) => {
 // Update shop
 app.put("/api/v1/shops/:id", async(req,res) =>{
     try{
-        const results = await db.query(`UPDATE seller SET slot = $1 where id=$2 returning *`, [req.body.slot, req.params.id]);
+        const results = await db.query(`UPDATE seller SET slots = $1 where id=$2 returning *`, [req.body.slot, req.params.id]);
         res.status(200).json({
             status: "success",
             data:{

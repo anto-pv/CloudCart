@@ -44,14 +44,14 @@ const FrontPage = () => {
                 <div className="class2">
                     <div className="col-md-6" id="head2">
                         <h2 className="featurette-heading">What you can do with this website?</h2>
-                        <p className="lead">
+                        <div className="lead">
                         <ul className="lead">
                             <li className="lead">You can book/order any item you want from your preferred shop in your locality.</li>
                             <li className="lead">Choose the time slot to collect your items(Only limited number of customers can book a particular slot).</li>
                             <li className="lead">Pay for your products.</li>
                             <li className="lead">Well! That's all you have to do.Go and collect your ordered products at your selected time slot.</li>
                         </ul>
-                        </p>
+                        </div>
                     </div>
                     <div className="col-md-6">
                         <img src="/images/iphone.png" alt="corona" height="400" width="350" class="iphone"/>

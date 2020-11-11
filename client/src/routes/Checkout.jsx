@@ -1,5 +1,9 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 const Checkout = () => {
+    const {id} =useParams();
+    const {ciphertext} = useParams();
+    console.log(decryptedData);
     return (
         <div className="bg-light">
             <div className="container">

@@ -3,6 +3,9 @@ import { useHistory, useParams } from 'react-router-dom';
 import ShopFinder from '../apis/ShopFinder';
 import Header from '../components/Header';
 import { ShopContext } from '../context/ShopContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure()
 const Cart = () => {
     const shopcart = {
         paddingTop: "70px",
@@ -191,6 +194,14 @@ const Cart = () => {
             padding: "12px 0 10px",
         },
     }
+    var totalp=0;
+    const total=(price)=>{
+        if(price==-1){
+            return(totalp);
+        }else{
+            totalp=totalp+price;
+        };
+    };
     const {cart, setCart} = useContext(ShopContext);
     let history = useHistory();
     const {id} =useParams();
@@ -217,13 +228,33 @@ const Cart = () => {
             console.log(err);
         };
     };
+    const checkout = async(e,total)=> {
+        try{
+            const checkou = await ShopFinder.get(`/user/${id}/cart`);
+            var result=0;
+            for(var i=0;i<checkou.data.data.carts.length;i++){
+                if(checkou.data.data.carts[i].slot==null){
+                    result=1;
+                    break;
+                }
+            };
+            if(result==1){                
+                toast.warn("Select available slots");
+            }else{
+                toast.success("Select available slots");
+                var ciphertext //make some complex mix of total
+                history.push(`/user/${id}/cart/Checkout/${ciphertext}`)
+            };
+        }catch(err){
+            console.log(err);
+        };
+    }
     const bookslot =async(sid) =>{
         //want to modify here that if he have time to buy then buy
-        try {console.log("reached before");
+        try {
             const usedslot = await ShopFinder.get(`/user/${id}/cart/${sid}`);
                 if(usedslot.data.data.slots.length>0){
                     const Login = await ShopFinder.put(`/user/${id}/cart/${sid}`);
-                    console.log("reached before");
                     history.push(`/shops/${sid}/slot`);
                     alert("It is booked in your owned slot and redirecting to other shop slots");
                 }else{
@@ -274,8 +305,8 @@ const Cart = () => {
                                             </td>
                                         <td style={shop__cart__table.tbody.tr.cart__price}>{cartslot(cart.slot,cart.seller)}
                                         </td>
-                                        <td style={shop__cart__table.tbody.tr.cart__price}>{cart.pcount*cart.price}</td>
-                                            <td style={shop__cart__table.tbody.tr.cart__close}><span className="fas fa-times-circle" onClick={(e) => handleDelete(e, cart.cid)}></span></td>
+                                        <td style={shop__cart__table.tbody.tr.cart__price}>{cart.pcount*cart.price}{total(cart.pcount*cart.price)}</td>
+                                        <td style={shop__cart__table.tbody.tr.cart__close}><span className="fas fa-times-circle" onClick={(e) => handleDelete(e, cart.cid)}></span></td>
                                         </tr>
                                         );
                                     })}
@@ -287,12 +318,7 @@ const Cart = () => {
                     <div className="row">
                         <div className="col-lg-6 col-md-6 col-sm-6">
                             <div style={cart__btn}>
-                                <a href="#">Continue Shopping</a>
-                            </div>
-                        </div>
-                        <div className="col-lg-6 col-md-6 col-sm-6">
-                            <div style={cart__btn.update__btn}>
-                                <a href="#"><span className="icon_loading"></span> Update cart</a>
+                                <a href="/Home">Continue Shopping</a>
                             </div>
                         </div>
                     </div>
@@ -310,10 +336,10 @@ const Cart = () => {
                             <div style={cart__total__procced}>
                                 <h6>Cart total</h6>
                                 <ul>
-                                    <li>Subtotal <span>$ 750.0</span></li>
-                                    <li>Total <span>$ 750.0</span></li>
+                                <li>Subtotal <span>{total(-1)}</span></li>
+                                    <li>Total <span>{total(-1)}</span></li>
                                 </ul>
-                                <a href="#" style={cart__total__procced.primaryBtn}>Proceed to checkout</a>
+                                <button onClick={(e)=>checkout(e,total(-1))}>Proceed to Checkout</button>
                             </div>
                         </div>
                     </div>

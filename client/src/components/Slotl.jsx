@@ -13,12 +13,13 @@ const Slotl = ({slot,time,slotno,sslot,num}) => {
         var arr = time.split(':');
         var thr = parseInt(arr[0]);
         var tm = parseInt(arr[1]);
-        var time= (thr+i) +":"+tm+":00";
-        if(thr<hr){
+        thr=thr+i;
+        var time= (thr) +":"+tm+":00";
+        if(thr<=hr || parseInt(Array)==0){
             return(<div className="alert alert-warning" role="alert">Sorry...This slots are unavailable now.....  
           </div>);
         }else{
-            var time2= (thr+1+i) +":"+tm+":00";
+            var time2= (thr+1) +":"+tm+":00";
             return(
                     <li className="list-group-item d-flex justify-content-between align-items-center" key={i}>
                         <label htmlFor="option">{time}-{time2}</label>
@@ -33,13 +34,15 @@ const Slotl = ({slot,time,slotno,sslot,num}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         var ele = document.getElementsByName('selector');    
-            for(j = 0; j < ele.length; j++) { 
+            for(var j = 0; j < ele.length; j++) { 
                 if(ele[j].checked) 
                     var i = ele[j].value; 
             } 
         var arr = time.split(':');
         var thr = parseInt(arr[0]);
-        var tslot= (thr+i) +":"+"00:00";
+        thr=thr+parseInt(i);
+        var tslot= thr+":"+"00:00";
+        console.log(i,thr,tslot);
         try {
             const slotconfirm = await ShopFinder.put(`/user/${user}/cart`,{
                 seller: id,
@@ -48,14 +51,15 @@ const Slotl = ({slot,time,slotno,sslot,num}) => {
             if (slotconfirm.data.data===undefined){
                     alert("You can't purchase this much items in this slot");
             }else{//here we need to split in that position and convert to in -1 and rejoin
-                output=[];
                 var length = Math.log(num) * Math.LOG10E + 1 | 0;
                 for (var k = 0; k < slotno*length ; k +=1) {
                     if(k==i*length)
-                        output.push(+sNumber.charAt(i));
+                        {console.log(i,sslot);
+                        sslot = sslot.substring(0,k)+(parseInt(sslot.substring(k,k+2))-1).toString()+sslot.substring(k+2);
+                        console.log(i,sslot);};
                 }
                 const slotdec = await ShopFinder.put(`/shops/${id}`,{
-                    slot: output.JOIN("")
+                    slot: sslot
                 });
                 history.push(`/user/${user}/cart`);
             };
