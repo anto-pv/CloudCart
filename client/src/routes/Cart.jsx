@@ -241,9 +241,9 @@ const Cart = () => {
             if(result==1){                
                 toast.warn("Select available slots");
             }else{
-                toast.success("Select available slots");
-                var ciphertext //make some complex mix of total
-                history.push(`/user/${id}/cart/Checkout/${ciphertext}`)
+                toast.success("Complete the checkout to fix the slots");
+                var cipher = (total+15000)*456
+                history.push(`/user/${id}/cart/Checkout/${cipher}`)
             };
         }catch(err){
             console.log(err);

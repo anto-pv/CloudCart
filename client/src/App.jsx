@@ -54,7 +54,7 @@ const Routes = () =>{
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
             <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>
-            <ProtectedRoute exact path="/user/:id/cart/Checkout/:p" auth={Auth.auth} component = {Checkout}/>
+            <ProtectedRoute exact path="/user/:id/cart/Checkout/:cipher" auth={Auth.auth} component = {Checkout}/>
         </Switch>
     );
 };
