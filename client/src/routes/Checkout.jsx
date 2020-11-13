@@ -1,22 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 const Checkout = () => {
     let history=useHistory();
     let {id,cipher} =useParams();
     var total = ((cipher)/456)-15000;
     console.log(total,id);
+    useEffect(()=>{
+        const script = document.createElement("script");
+
+    });
     const handleSubmit=()=>{
         var ele = document.getElementsByName('paymentMethod');    
             for(var j = 0; j < ele.length; j++) { 
                 if(ele[j].checked) 
                     var hresult = ele[j].value; 
             }
-            if(hresult="pcard"){
+            if(hresult="pcard"){//}
             }else{
-                var elem = document.getElementsByName('card');
-                console.log(elem.value); 
+                return(<div><div className="row">
+                <div className="col-md-6 mb-3">
+                    <label for="cc-name">Name on card</label>
+                    <input type="text" name="card" className="form-control" id="cc-name" placeholder="" required/>
+                    <small className="text-muted">Full name as displayed on card</small>
+                    <div className="invalid-feedback">
+                    Name on card is required
+                    </div>
+                </div>
+                <div className="col-md-6 mb-3">
+                    <label for="cc-number">Credit card number</label>
+                    <input type="text" className="form-control" id="cc-number" placeholder="" required/>
+                    <div className="invalid-feedback">
+                    Credit card number is required
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+            <div className="col-md-3 mb-3">
+                <label for="cc-expiration">Expiration</label>
+                <input type="text" className="form-control" id="cc-expiration" placeholder="" required/>
+                <div className="invalid-feedback">
+                Expiration date required
+                </div>
+            </div>
+            <div className="col-md-3 mb-3">
+                <label for="cc-cvv">CVV</label>
+                <input type="text" className="form-control" id="cc-cvv" placeholder="" required/>
+                <div className="invalid-feedback">
+                Security code required
+                </div>
+            </div>
+            </div></div>);
             };
-        return(<div>fdkjg</div>);
     };
     return (
         <div className="bg-light">
@@ -157,39 +191,6 @@ const Checkout = () => {
                                 </div>
                             </div>
                             {handleSubmit()}
-                            <div className="row">
-                                <div className="col-md-6 mb-3">
-                                    <label for="cc-name">Name on card</label>
-                                    <input type="text" name="card" className="form-control" id="cc-name" placeholder="" required/>
-                                    <small className="text-muted">Full name as displayed on card</small>
-                                    <div className="invalid-feedback">
-                                    Name on card is required
-                                    </div>
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label for="cc-number">Credit card number</label>
-                                    <input type="text" className="form-control" id="cc-number" placeholder="" required/>
-                                    <div className="invalid-feedback">
-                                    Credit card number is required
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                            <div className="col-md-3 mb-3">
-                                <label for="cc-expiration">Expiration</label>
-                                <input type="text" className="form-control" id="cc-expiration" placeholder="" required/>
-                                <div className="invalid-feedback">
-                                Expiration date required
-                                </div>
-                            </div>
-                            <div className="col-md-3 mb-3">
-                                <label for="cc-cvv">CVV</label>
-                                <input type="text" className="form-control" id="cc-cvv" placeholder="" required/>
-                                <div className="invalid-feedback">
-                                Security code required
-                                </div>
-                            </div>
-                            </div>
                             <hr className="mb-4"/>
                             <button className="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
                         </form>

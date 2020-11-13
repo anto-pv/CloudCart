@@ -10,7 +10,7 @@ import Cookies from 'js-cookie';
 import AuthApi from "./apis/AuthApi";
 import FrontPage from './routes/CommercialFront';
 import Cart from './routes/Cart';
-import SellerDash from './routes/SellerDash';
+import Dash from './routes/SellerDash';
 import Checkout from './routes/Checkout';
 import SellerLogin from './routes/SellerLogin';
 import SellerReg from './routes/SellerReg';
@@ -34,6 +34,7 @@ const App = () => {
                 <AuthApi.Provider value={{auth,setAuth}}>
                 <Router>
                     <Routes/>
+                    <SRoutes />
                 </Router>
                 </AuthApi.Provider>
             </div>
@@ -45,16 +46,23 @@ const Routes = () =>{
     return(
         <Switch>
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
+            <SelleRLogin exact path="/shops/login" auth={Auth.auth} component = {SellerLogin}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
-            <Route exact path="/shops/register" component = {SellerReg}/>
-            <Route exact path="/shops/login" component = {SellerLogin}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
-            <Route exact path="/shops/:id/dash" component ={SellerDash}/>
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
             <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>
             <ProtectedRoute exact path="/user/:id/cart/Checkout/:cipher" auth={Auth.auth} component = {Checkout}/>
+        </Switch>
+    );
+};
+const SRoutes = () =>{
+    const Auth = React.useContext(AuthApi)
+    return(
+        <Switch>
+            <SelleRLogin exact path="/shops/register" auth={Auth.auth} component = {SellerReg}/>
+            <SelleRRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
         </Switch>
     );
 };
@@ -87,5 +95,32 @@ const ProtectedLogin = ({auth,component:Component,...rest}) =>{
         />
     )
 }
-
+const SelleRRoute = ({auth,component:Component,...rest}) =>{
+    return(
+        <Route
+        {...rest}
+        render ={()=>auth? (
+            <Component/>
+        ):
+            (
+                <Redirect to="/shops/login"/>
+            )
+    }
+        />
+    )
+}
+const SelleRLogin = ({auth,component:Component,...rest}) =>{
+    return(
+        <Route
+        {...rest}
+        render ={()=>(!auth)? (
+            <Component/>
+        ):
+            (
+                <Redirect to="/shops/Dash"/>
+            )
+    }
+        />
+    )
+}
 export default App;

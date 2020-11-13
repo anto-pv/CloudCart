@@ -25,9 +25,11 @@ app.get("/api/v1/shops", async (req,res) =>{
 });
 //Get a shop
 app.get("/api/v1/shops/:id", async(req,res)=>{
+    if((req.params.id)!="Dash"){
+        console.log(typeof(parseInt(req.params.id)));
     try{
         const shop = await db.query(`SELECT * FROM seller WHERE id = $1`,[req.params.id]);
-        const products = await db.query(`SELECT * FROM product WHERE seller = $1`,[req.params.id]);
+        const products = await db.query(`SELECT * FROM product WHERE (seller = $1 and live=true)`,[req.params.id]);
         res.status(200).json({
             status: "sucsess",
             data: {
@@ -37,7 +39,7 @@ app.get("/api/v1/shops/:id", async(req,res)=>{
         });
     }catch(err) {
         console.log(err);
-    };
+    };};
 });
 
 // Create a shop
@@ -71,7 +73,7 @@ app.put("/api/v1/shops/:id", async(req,res) =>{
     }
 });
 //login
-app.post("/api/v1/user/login", async (req,res) => {
+app.put("/api/v1/user/login", async (req,res) => {
     let errors = "";
     try{
         const results = await db.query(`SELECT * FROM customer WHERE username = $1`,[req.body.username]);
@@ -98,7 +100,7 @@ app.post("/api/v1/user/login", async (req,res) => {
     };
 });
 //login seller
-app.post("/api/v1/seller/login", async (req,res) => {
+app.put("/api/v1/seller/login", async (req,res) => {
     let errors = "";
     try{
         const results = await db.query(`SELECT * FROM seller WHERE name = $1`,[req.body.name]);
@@ -165,10 +167,10 @@ app.post("/api/v1/user/register", async (req,res) => {
 });
 //add product
 app.post("/api/v1/shops/:id/add", async (req,res) => {
-    try {
+    try {const res = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`)
         const results = await db.query(
             `INSERT INTO product (name, detail, sellername, price, producttime, seller, live) values($1, $2, $3, $4, $5, $6, $7) returning *`,
-            [req.body.name, req.body.detail,req.body.seller, req.body.price, req.body.producttime, req.params.id, req.body.live]);
+            [req.body.name, req.body.detail,res, req.body.price, req.body.producttime, req.params.id, req.body.live]);
         res.status(201).json({
             status: "success",
             data: {
@@ -182,7 +184,7 @@ app.post("/api/v1/shops/:id/add", async (req,res) => {
 // Update Product
 app.put("/api/v1/product/:id", async(req,res) =>{
     try{
-        const results = await db.query(`UPDATE product SET name = $1, detail= $2, price= $3, producttime= $4,live=$5 where id=$6 returning *`, [req.body.name, req.body.detail, req.body.price, req.body.producttime, req.body.live, req.params.id]);
+        const results = await db.query(`UPDATE product SET price= $1, producttime= $2,live=$3 where id=$4 returning *`, [req.body.price, req.body.producttime, req.body.live, req.params.id]);
         res.status(200).json({
             status: "success",
             data:{
@@ -396,7 +398,7 @@ app.post("/api/v1/user/:id/cart", async (req,res) => {
 // Delete Product
 
 app.delete("/api/v1/product/:id", async (req,res) =>{
-    try{
+    try{const cresults = await db.query(`UPDATE product SET live=false where id=$1 returning *`, [req.params.id]);
         const results = await db.query(`DELETE FROM product where id= $1`,[req.params.id]);
         res.status(204).json({
             status: "success",

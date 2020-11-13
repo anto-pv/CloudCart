@@ -256,7 +256,7 @@ const Cart = () => {
                 if(usedslot.data.data.slots.length>0){
                     const Login = await ShopFinder.put(`/user/${id}/cart/${sid}`);
                     history.push(`/shops/${sid}/slot`);
-                    alert("It is booked in your owned slot and redirecting to other shop slots");
+                    toast.success("Succesfully booked in your owned slot and redirecting to other shop slots");
                 }else{
                     history.push(`/shops/${sid}/slot`);
                 };

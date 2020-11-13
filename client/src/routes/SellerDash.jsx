@@ -1,9 +1,13 @@
 import React from 'react';
-const SellerDash = () => {
+import AddProduct from '../components/Addproduct';
+import Header from '../components/Header';
+import ProductList from '../components/productList';
+const Dash = () => {
     return (
-        <div>
-
+        <div className="container">
+            <AddProduct />
+            <ProductList/>
         </div>
     );
 };
-export default SellerDash;
+export default Dash;

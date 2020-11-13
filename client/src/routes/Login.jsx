@@ -5,6 +5,9 @@ import ShopFinder from '../apis/ShopFinder';
 import logo from '../images/logo_new.png';
 import Cookies from 'js-cookie';
 import { ShopContext } from '../context/ShopContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure()
 const Login = () => {
     const Auth = React.useContext(AuthApi);
     const {user, setUser} = useContext(ShopContext);
@@ -14,23 +17,23 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const Login = await ShopFinder.post(`/user/login`,{
+            const Login = await ShopFinder.put(`/user/login`,{
                 username,
                 password
             });
             if (Login.data.data===undefined){
                 for (let letter of Login.data) {
                     if (letter==='i'){
-                        alert("Password is not correct");
+                        toast.warn("Password is not correct");
                     };
                     if (letter==='u'){
-                        alert("Invalid user name,Register if not..");
+                        toast.error("Invalid user name,Register if not..");
                     };
                 };
             }else{
                 setUser(Login.data.data.user);
-                Auth.setAuth(true);
                 Cookies.set("user",user.id);
+                Auth.setAuth(true);
                 console.log("started")
             };
         } catch(err) {
@@ -59,6 +62,7 @@ const Login = () => {
                 </div>
                 <div>
                     <button onClick={register} className="btn btn-outline-dark">Register Here</button>
+                    <a href="/shops/login" className="btn btn-outline-dark"> Are you seller?</a>
                 </div>
             </form>
         </div>
