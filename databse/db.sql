@@ -1,6 +1,7 @@
 CREATE DATABASE ccart;
 CREATE TABLE seller(
     id BIGSERIAL NOT NULL PRIMARY KEY,
+    imgname VARCHAR(200),
     name VARCHAR(40) NOT NULL,
     detail VARCHAR(100),
     location VARCHAR(50) NOT NULL,
@@ -17,6 +18,7 @@ VALUES ('Modi Bakers','Mala','09:00:00',8,'00:10:00',20,'20202020102020','passsw
 
 CREATE TABLE product(
     id BIGSERIAL NOT NULL PRIMARY KEY,
+    imgname VARCHAR(200),
     name VARCHAR(40) NOT NULL,
     detail VARCHAR(100),
     sellername VARCHAR(40),

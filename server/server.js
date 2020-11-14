@@ -165,6 +165,45 @@ app.post("/api/v1/user/register", async (req,res) => {
         };
     }
 });
+//register seller
+app.post("/api/v1/shops/register", async (req,res) => {
+    let {username, email, address, contact, location, password, password2} = req.body;
+    let errors = "";
+    if (!username || ! email || !address || !contact || !location || !password || !password2) {
+        errors = errors.concat("e");
+    }
+    if (password.length < 6) {
+        errors = errors.concat("i");
+    }
+    if (password != password2) {
+        errors = errors.concat("o");
+    }
+    if (errors.length > 0){
+        res.send(errors);
+    }else{
+        try{
+            const results = await db.query(`SELECT * FROM customer WHERE email = $1`,[email]);
+            if (results.rows.length > 0){
+                errors = errors.concat("u");
+            }else{
+                const results = await db.query(
+                    `INSERT INTO customer (username, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
+                    [username, email, address, contact, location, password]);
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: results.rows[0],
+                    },
+                });
+            }
+        }catch(err){
+            console.log(err);
+        };
+        if(errors.length>0){
+            res.send(errors);
+        };
+    }
+});
 //add product
 app.post("/api/v1/shops/:id/add", async (req,res) => {
     try {const res = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`)
