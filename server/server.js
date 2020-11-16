@@ -2,10 +2,36 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
+const multer = require('multer');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use(express.static('../client/public/'));
+//set storageengine
+const storage = multer.diskStorage({
+    destination: '../client/public/uploads',
+    filename: function(req,file,cb){
+        cb(null,file.filename+'-'+Date.now()+path.extname(file.originalname));
+    }
+});
+function checkFileType(file, cb){
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if(mimetype && extname){
+        return cb(null, true);
+    }else{
+        cb('Error: Images Only!');
+    }
+}
+//init upload
+const upload = multer({
+    storage: storage,
+    limits:{filesize: 1000000},
+    fileFilter: function(req, file, cb){
+        checkFileType(file, cb);
+    }
+}).single('myImage');
 //Get all shops
 app.get("/api/v1/shops", async (req,res) =>{
     try{
@@ -43,19 +69,66 @@ app.get("/api/v1/shops/:id", async(req,res)=>{
 });
 
 // Create a shop
-app.post("/api/v1/shops", async (req,res) => {
-    try {
-        const results = await db.query(
-            `INSERT INTO seller (name, location, servicetime, password) values($1, $2, $3, $4) returning *`,
-            [req.body.name, req.body.location, req.body.servicetime, req.body.password]);
-        res.status(201).json({
-            status: "sucsess",
-            data: {
-                shop: results.rows[0],
-            },
-        });
-    }catch(err){
-        console.log(err);
+app.post("/api/v1/shops/register", async (req,res) => {
+    let errors = "";
+    upload(req.body.image,res,(err)=>{
+        if(err){const imgname="0";
+            res.render('index',{
+                msg: err
+            });
+        }else{
+            if(req.body.image == undefined){
+                const imgname="0";
+                res.render('index',{
+                    msg: 'Error: No File Selected!'
+                });
+            }else{
+                  const imgname = req.body.image.filename;
+            }
+        }
+    });
+    if (req.body.password.length < 6) {
+        errors = errors.concat("i");
+    }
+    if (req.body.password != req.body.password2) {
+        errors = errors.concat("o");
+    }
+    if (errors.length > 0){
+        res.send(errors);
+    }else{
+        try{
+            const results = await db.query(`SELECT * FROM customer WHERE (gst = $1 or name=$2)`,[req.body.gst, req.body.name]);
+            if (results.rows.length > 0){
+                errors = errors.concat("u");
+            }else{
+                if(imgname=="0"){
+                const results = await db.query(
+                    `INSERT INTO customer (name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values($1, $2, $3, $4, $5, $6) returning *`,
+                    [req.body.name, req.body.gst,req.body.detail, req.body.location, req.body.opentime, req.body.totalthr,req.body.servicetime,req.body.numbslot ,req.body.slots ,req.body password]);
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: results.rows[0],
+                    },
+                });
+                }else{
+                    const results = await db.query(
+                    `INSERT INTO customer (imgname, name, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
+                    [imgname, name, email, address, contact, location, password]);
+                res.status(201).json({
+                    status: "success",
+                    data: {
+                        user: results.rows[0],
+                    },
+                });
+                }
+            }
+        }catch(err){
+            console.log(err);
+        };
+        if(errors.length>0){
+            res.send(errors);
+        };
     }
 });
 // Update shop
@@ -128,45 +201,6 @@ app.put("/api/v1/seller/login", async (req,res) => {
 });
 //register
 app.post("/api/v1/user/register", async (req,res) => {
-    let {username, email, address, contact, location, password, password2} = req.body;
-    let errors = "";
-    if (!username || ! email || !address || !contact || !location || !password || !password2) {
-        errors = errors.concat("e");
-    }
-    if (password.length < 6) {
-        errors = errors.concat("i");
-    }
-    if (password != password2) {
-        errors = errors.concat("o");
-    }
-    if (errors.length > 0){
-        res.send(errors);
-    }else{
-        try{
-            const results = await db.query(`SELECT * FROM customer WHERE email = $1`,[email]);
-            if (results.rows.length > 0){
-                errors = errors.concat("u");
-            }else{
-                const results = await db.query(
-                    `INSERT INTO customer (username, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
-                    [username, email, address, contact, location, password]);
-                res.status(201).json({
-                    status: "success",
-                    data: {
-                        user: results.rows[0],
-                    },
-                });
-            }
-        }catch(err){
-            console.log(err);
-        };
-        if(errors.length>0){
-            res.send(errors);
-        };
-    }
-});
-//register seller
-app.post("/api/v1/shops/register", async (req,res) => {
     let {username, email, address, contact, location, password, password2} = req.body;
     let errors = "";
     if (!username || ! email || !address || !contact || !location || !password || !password2) {

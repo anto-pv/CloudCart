@@ -3,6 +3,7 @@ CREATE TABLE seller(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     imgname VARCHAR(200),
     name VARCHAR(40) NOT NULL,
+    gst VARCHAR(100) NOT NULL,
     detail VARCHAR(100),
     location VARCHAR(50) NOT NULL,
     opentime TIME NOT NULL,
@@ -10,11 +11,10 @@ CREATE TABLE seller(
     servicetime TIME,
     numbslot INT NOT NULL,
     slots VARCHAR,
-    queuetime TIME,
     password VARCHAR(25) NOT NULL
 );
-INSERT INTO seller (name,location,opentime,totalthr,servicetime,numbslot,slots,password)
-VALUES ('Modi Bakers','Mala','09:00:00',8,'00:10:00',20,'20202020102020','passsword123');
+INSERT INTO seller (name,location,gst,opentime,totalthr,servicetime,numbslot,slots,password)
+VALUES ('Modi Bakers','Mala','Klfghruigh90','09:00:00',8,'00:10:00',20,'20202020102020','passsword123');
 
 CREATE TABLE product(
     id BIGSERIAL NOT NULL PRIMARY KEY,
