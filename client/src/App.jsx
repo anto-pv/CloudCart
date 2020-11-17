@@ -47,6 +47,7 @@ const Routes = () =>{
         <Switch>
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
             <SelleRLogin exact path="/shops/login" auth={Auth.auth} component = {SellerLogin}/>
+            <SelleRLogin exact path="/shops/register" auth={Auth.auth} component = {SellerReg}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
@@ -61,7 +62,6 @@ const SRoutes = () =>{
     const Auth = React.useContext(AuthApi)
     return(
         <Switch>
-            <SelleRLogin exact path="/shops/register" auth={Auth.auth} component = {SellerReg}/>
             <SelleRRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
         </Switch>
     );
