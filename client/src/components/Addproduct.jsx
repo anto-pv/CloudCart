@@ -43,7 +43,7 @@ const AddProduct = () => {
                         <input value={producttime} onChange={e =>setProducttime(e.target.value)} className="form-control" type="text" placeholder="Detail"/>
                     </div>
                     <div className="col">
-                        <input value={live} onChange={e =>setLive(e.target.value)} className="form-control" type="text" placeholder="Detail"/>
+                        <input value={live} onChange={e =>setLive(e.target.value)} className="form-control" type="button" placeholder="live"/>
                     </div>
                     <button onClick={handleSubmit} type="submit" className="btn btn-primary">Add</button>
                 </div>

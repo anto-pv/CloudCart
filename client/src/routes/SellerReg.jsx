@@ -8,8 +8,6 @@ const Register = () => {
     let history = useHistory();
     const [name, setName] = useState("");
     const [gst,setGst] = useState("");
-    const [file, setFile] = useState("");
-    const [filename, setFilename] = useState('Choose File:');
     const [detail, setDetail] = useState("");
     const [opentime, setOpentime] = useState("");
     const [location, setLocation] = useState("");
@@ -18,12 +16,12 @@ const Register = () => {
     const [numbslot, setNumbslot] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
-    const handleSubmit = async () => {
-        try {
-            const response = await ShopFinder.post("/shops/register",{
+    const handleSubmit = async e => {
+      try{
+        e.preventDefault();
+        const response = await ShopFinder.post("/shops/register",{
                 name,
                 gst,
-                file,
                 detail,
                 location,
                 opentime,
@@ -31,7 +29,7 @@ const Register = () => {
                 servicetime,
                 numbslot,
                 password,
-                password2
+                password2,
             });
             if (response.data.data===undefined){
                 for (let letter of response.data) {
@@ -56,14 +54,14 @@ const Register = () => {
                 };
             }else{
               toast.success("You are Registered");
-                history.push('/shops/login');
+              history.push("/shops/login");
             };
         } catch(err) {
             console.log(err);
         };
     };
     const login =()=>{
-        history.push("/user/login")
+        history.push("/shops/login");
     };
 
     const mainHeader = {
@@ -87,6 +85,13 @@ const Register = () => {
         marginBottom: "17px",
         color: "#212121"
       };
+      const center2 = {
+        display: "block",
+        paddingTop: "20px",
+        marginLeft: "auto",
+        marginRight: "auto",
+        paddingBottom: '20px'
+      }
       const center = {
         display: "block",
         marginLeft: "auto",
@@ -130,10 +135,10 @@ const Register = () => {
       
     return(
     <div>
-        <img src="/images/logo_new.png" width="200" height="150" alt="logo" style={center}/>
+        <img src="/images/logo_new.png" width="220" height="110" alt="logo" style={center2}/>
         <header id="main-header" style={mainHeader}>
           <div className="form" style={forms}>
-            <form action="#" className="was-validated" encType="multipart/form-data">
+            <form action="#" className="was-validated">
               <div className="form-group" style={formGroup}>
                 <h2 style={h2}>Register</h2>
               </div>
@@ -249,19 +254,6 @@ const Register = () => {
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
                   id="password2"
-                  className="form-control"
-                  style={formControl}
-                  required
-                />
-              </div>
-              <div className="form-group" style={formGroup}>
-                <input
-                  type="file"
-                  name="image"
-                  placeholder="Upload File"
-                  value={file}
-                  onChange={(e) => setFile(e.target.value)}
-                  id="file"
                   className="form-control"
                   style={formControl}
                   required

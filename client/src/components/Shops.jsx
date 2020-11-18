@@ -20,12 +20,16 @@ const Shops = (props) => {
         history.push(`/shops/${id}`);
     };
     return(
-        <div className="container">
+        <div className="row row-cols-4 mb-2">
             <div className="card-deck">
                 {shops  && shops.map(shop =>{ 
-                    return(<div  className="card border-dark mb-4" style={{width:"18rem"}} onClick={() => handleShopSelect(shop.id)} key={shop.id}>
-                            <div className="card-header">{shop.name}</div>
-                            <div className="card-body">{shop.detail}</div> 
+                    return(
+                        <div  key={shop.id} className="card text-white bg-success mb-3" style={{maxWidth:"60%",height:"20rem"}} onClick={() => handleShopSelect(shop.id)} key={shop.id}>
+                            <img src={`/uploads${shop.imgname}`} className="card-img-top" alt="no image"/>
+                            <div class="card-body">
+                                <div className="card-title">{shop.name}</div>
+                                <div className="card-text">{shop.detail}</div>
+                            </div> 
                         </div>
                     );
                 })}

@@ -2,12 +2,38 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./db"); 
-const multer = require('multer');
-const app = express();
+const path = require('path');
 const fileUpload = require('express-fileupload');
+const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
+app.put("/api/v1/shops/:id/upload", async (req,res)=>{
+    try{
+    if(req.files===null){
+        return res.status(400).json({ msg: 'No file Uploaded'});
+    }
+    const file = req.files.file;
+    file.name= file.name.split(path.extname(file.name))[0]+'-'+Date.now()+path.extname(file.name);
+    file.mv(`../client/public/uploads/${file.name}`,err =>{
+        if(err){
+                console.error(err);
+                return res.status(500).send(err);
+            }
+        });
+        const results = await db.query(`UPDATE seller SET imgname = $1 where id=$2 returning *`, [file.name, req.params.id]);
+        res.status(200).json({
+        status: "success",
+                data:{
+                shops: results.rows[0],
+            },
+
+            });
+        console.log(results);
+    }catch(err){
+        console.log(err);
+    }
+});
 //Get all shops
 app.get("/api/v1/shops", async (req,res) =>{
     try{
@@ -65,13 +91,7 @@ app.post("/api/v1/shops/register", async(req,res) => {
     if (errors.length > 0){
         res.send(errors);
     }else{
-        try{const file= req.body.files.file;
-            file.mv(`${__dirname}/client/public/uploads/${file.name}`,err=>{
-                if(err){
-                    console.error(err);
-                    return res.status(500).send(err);
-                }
-            });
+        try{
             const results = await db.query(`SELECT * FROM seller WHERE (gst = $1 or name=$2)`,[req.body.gst, req.body.name]);
             if (results.rows.length > 0){
                 errors = errors.concat("u");
@@ -92,8 +112,8 @@ app.post("/api/v1/shops/register", async(req,res) => {
                     for(var i=0;i<totalthr;i++){
                         slots=slots+(req.body.numbslot).toString();
                     }
-                    const results = await db.query(`INSERT INTO seller (imgname, name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values($1, $2, $3, $4, $5, $6,$7,$8,$9,$10,$11) returning *`,
-                    [file.name, req.body.name, req.body.gst,req.body.detail, req.body.location, req.body.opentime,totalthr,req.body.servicetime,req.body.numbslot ,slots ,req.body.password]);
+                    const results = await db.query(`INSERT INTO seller (name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values($1, $2, $3, $4, $5, $6,$7,$8,$9,$10) returning *`,
+                    [req.body.name, req.body.gst,req.body.detail, req.body.location, req.body.opentime,totalthr,req.body.servicetime,req.body.numbslot ,slots ,req.body.password]);
                     res.status(201).json({
                     status: "success",
                     data: {

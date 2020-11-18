@@ -34,7 +34,6 @@ const App = () => {
                 <AuthApi.Provider value={{auth,setAuth}}>
                 <Router>
                     <Routes/>
-                    <SRoutes />
                 </Router>
                 </AuthApi.Provider>
             </div>
@@ -46,10 +45,11 @@ const Routes = () =>{
     return(
         <Switch>
             <ProtectedLogin exact path="/user/login" auth={Auth.auth} component ={Login}/>
-            <SelleRLogin exact path="/shops/login" auth={Auth.auth} component = {SellerLogin}/>
-            <SelleRLogin exact path="/shops/register" auth={Auth.auth} component = {SellerReg}/>
+            <ProtectedLogin exact path="/shops/login" component = {SellerLogin}/>
+            <ProtectedLogin exact path="/shops/register" component = {SellerReg}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
+            <ProtectedRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
@@ -58,15 +58,6 @@ const Routes = () =>{
         </Switch>
     );
 };
-const SRoutes = () =>{
-    const Auth = React.useContext(AuthApi)
-    return(
-        <Switch>
-            <SelleRRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
-        </Switch>
-    );
-};
-
 const ProtectedRoute = ({auth,component:Component,...rest}) =>{
     return(
         <Route
@@ -90,34 +81,6 @@ const ProtectedLogin = ({auth,component:Component,...rest}) =>{
         ):
             (
                 <Redirect to="/Home"/>
-            )
-    }
-        />
-    )
-}
-const SelleRRoute = ({auth,component:Component,...rest}) =>{
-    return(
-        <Route
-        {...rest}
-        render ={()=>auth? (
-            <Component/>
-        ):
-            (
-                <Redirect to="/shops/login"/>
-            )
-    }
-        />
-    )
-}
-const SelleRLogin = ({auth,component:Component,...rest}) =>{
-    return(
-        <Route
-        {...rest}
-        render ={()=>(!auth)? (
-            <Component/>
-        ):
-            (
-                <Redirect to="/shops/Dash"/>
             )
     }
         />

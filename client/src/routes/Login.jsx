@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import AuthApi from '../apis/AuthApi';
 import ShopFinder from '../apis/ShopFinder';
-import logo from '../images/logo_new.png';
 import Cookies from 'js-cookie';
 import { ShopContext } from '../context/ShopContext';
 import { toast } from 'react-toastify';
@@ -99,13 +98,14 @@ const Login = () => {
         }
     };
     const center = {
-        display: "block",
-        marginLeft: "auto",
-        marginRight: "auto"
+      display: "block",
+      paddingTop: "30px",
+      marginLeft: "auto",
+      marginRight: "auto"
       }
     return(
         <div>
-        <img src = {logo} width="200" height="150" alt = "logo" style={center}/>
+        <img src = "/images/logo_new.png" href="/Home" width="220" height="80" alt = "logo" style={center}/>
             <header id="main-header" style={mainHeader}>
       <div className="form" style={forms}>
         <form action="#" className="was-validated">
