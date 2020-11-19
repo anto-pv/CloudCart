@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 const Checkout = () => {
     let history=useHistory();
     let {id,cipher} =useParams();
@@ -9,6 +10,8 @@ const Checkout = () => {
         const script = document.createElement("script");
 
     });
+    const paypal =() =>{
+    }
     const handleSubmit=()=>{
         var ele = document.getElementsByName('paymentMethod');    
             for(var j = 0; j < ele.length; j++) { 
@@ -125,65 +128,12 @@ const Checkout = () => {
                                 Please enter a valid email address for shipping updates.
                                 </div>
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="address">Address</label>
-                                <input type="text" className="form-control" id="address" placeholder="1234 Main St" required/>
-                                <div className="invalid-feedback">
-                                Please enter your shipping address.
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label for="address2">Address 2 <span className="text-muted">(Optional)</span></label>
-                                <input type="text" className="form-control" id="address2" placeholder="Apartment or suite"/>
-                            </div>   
-                            <div className="row">
-                                <div className="col-md-5 mb-3">
-                                    <label for="country">Country</label>
-                                    <select className="custom-select d-block w-100" id="country" required>
-                                        <option value="">Choose...</option>
-                                        <option>United States</option>
-                                    </select>
-                                    <div className="invalid-feedback">
-                                    Please select a valid country.
-                                    </div>
-                                </div>
-                                <div className="col-md-4 mb-3">
-                                    <label for="state">State</label>
-                                    <select className="custom-select d-block w-100" id="state" required>
-                                        <option value="">Choose...</option>
-                                        <option>California</option>
-                                    </select>
-                                    <div className="invalid-feedback">
-                                    Please provide a valid state.
-                                    </div>
-                                </div>
-                                <div className="col-md-3 mb-3">
-                                    <label for="zip">Zip</label>
-                                    <input type="text" className="form-control" id="zip" placeholder="" required/>
-                                    <div className="invalid-feedback">
-                                    Zip code required.
-                                    </div>
-                                </div>
-                            </div>
-                            <hr className="mb-4"/>
-                            <div className="custom-control custom-checkbox">
-                                <input type="checkbox" className="custom-control-input" id="same-address"/>
-                                <label className="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-                            </div>
-                            <div className="custom-control custom-checkbox">
-                                <input type="checkbox" className="custom-control-input" id="save-info"/>
-                                <label className="custom-control-label" for="save-info">Save this information for next time</label>
-                            </div>
-                            <hr className="mb-4"/>           
+                            <hr className="mb-4"/>         
                             <h4 className="mb-3">Payment</h4>
                             <div className="d-block my-3">
                                 <div className="custom-control custom-radio">
-                                    <input id="credit" name="paymentMethod" value="ccard" type="radio" className="custom-control-input" checked required/>
-                                    <label className="custom-control-label" for="credit">Credit card</label>
-                                </div>
-                                <div className="custom-control custom-radio">
                                     <input id="debit" name="paymentMethod" value="dcard" type="radio" className="custom-control-input" required/>
-                                    <label className="custom-control-label" for="debit">Debit card</label>
+                                    <label className="custom-control-label" for="debit">UPI</label>
                                 </div>
                                 <div className="custom-control custom-radio">
                                     <input id="paypal" name="paymentMethod" value="pcard" type="radio" className="custom-control-input" required/>
@@ -192,7 +142,7 @@ const Checkout = () => {
                             </div>
                             {handleSubmit()}
                             <hr className="mb-4"/>
-                            <button className="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+                            <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={paypal}>Continue to checkout</button>
                         </form>
                     </div>
                 </div>     

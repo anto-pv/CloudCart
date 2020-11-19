@@ -1,10 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import AuthApi from '../apis/AuthApi';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
 const Header = () => {
     let history = useHistory();
     const Auth = React.useContext(AuthApi);
+    const [searchValue, setSearchValue] = useState();
     const logout =()=>{
         Auth.setAuth(false);
         Cookies.remove("user");
@@ -108,7 +112,13 @@ const Header = () => {
       
       const search = {
         marginLeft: "-600px"
-      };      
+      };  
+    const searchs =()=>{
+        if(searchValue==undefined){
+          toast.warn("You should type anything to be searched")
+        }else{
+        history.push(`/shops/search/${searchValue}`);};
+    };    
     return(        
         <nav className="navbar navbar-expand-lg navbar-dark teal mb-4" style={nav}>
             <a className="navbar-brand" href="/Home"><img src="/images/logo_new.png" alt="Cloudcart" height="50px" width="200px" className="logo"/>
@@ -122,13 +132,13 @@ const Header = () => {
                     </li>
                 </ul>
                 <form className="form">
-                    <input className="form-control search" type="text" placeholder="Search" aria-label="Search" size="110" style={input}/>
+                    <input id="search" value={searchValue} onChange={e =>setSearchValue(e.target.value)} className="form-control search" type="text" placeholder="Search" aria-label="Search" size="110" style={input}/>
                     </form>
                     <button
                         className="btn btn-outline-success"
                         type="button"
                         style={searchbutton}
-                    >
+                        onClick={searchs}>   
                         Search
                     </button>
                     <button
@@ -137,7 +147,7 @@ const Header = () => {
                         style={cartbutton}
                     >
                         <i 
-                            class="fas fa-shopping-cart"
+                            className="fas fa-shopping-cart"
                             id="cart-logo"
                             data-toggle="modal"
                             data-target="#cart"

@@ -5,6 +5,7 @@ import ShopFinder from '../apis/ShopFinder';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useHistory, useParams } from 'react-router-dom';
+import Header2 from '../components/Header2';
 toast.configure()
 const Dash = () => {
     let history = useHistory();
@@ -24,15 +25,18 @@ const Dash = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            toast.success("Image successfully Uploaded");
+            history.push("/shops/Dash");
         }catch(err){
             if(err.response.status === 500){
               toast.error('image is not uploaded correctly');
             }
         };
-        toast.success("Image successfully Uploaded");
     };
     return (
-        <div className="container">
+        <div>
+            <Header2 />
+            <div className="container">
             <div>
            <form onSubmit={onSubmit}><div className='custom-file mb-4'>
         <input type='file' className='custom-file-input' id='customFile' onChange={onChange}/>
@@ -43,6 +47,7 @@ const Dash = () => {
     </div>
             <AddProduct />
             <ProductList/>
+            </div>
             </div>
     );
 };

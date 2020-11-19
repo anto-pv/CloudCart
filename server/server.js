@@ -29,7 +29,6 @@ app.put("/api/v1/shops/:id/upload", async (req,res)=>{
             },
 
             });
-        console.log(results);
     }catch(err){
         console.log(err);
     }
@@ -62,14 +61,44 @@ app.get("/api/v1/shops/:id", async(req,res)=>{
             status: "sucsess",
             data: {
                 shop: shop.rows[0],
-                products: products.rows,
+                products: products.rows
             },
         });
     }catch(err) {
         console.log(err);
     };};
 });
-
+//Get a shop product in seller
+app.get("/api/v1/shops/:id/product/:pid", async(req,res)=>{
+    try{
+        const product = await db.query(`SELECT * FROM product WHERE (seller = $1 and id=$2)`,[req.params.id,req.params.pid]);
+        res.status(200).json({
+            status: "sucsess",
+            data: {
+                product: product.rows
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    };
+});
+//Get all shops on search
+app.get("/api/v1/shops/search/:id", async (req,res) =>{
+    try{
+        const results = await db.query(`SELECT * FROM seller where location  like '%' || $1 || '%' or name like '%' || $2 || '%' or detail like '%' || $3 || '%'`,[req.params.id ,req.params.id ,req.params.id]);
+        const services = await db.query(`SELECT * FROM product WHERE (name like '%' || $1 || '%' or detail like '%' || $2 || '%')`,[req.params.id, req.params.id]);
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+            data: {
+                shops: results.rows,
+                services: services.rows
+            },
+        });
+    }catch(err){
+        console.log(err);
+    };
+});
 // Create a shop
 app.post("/api/v1/shops/register", async(req,res) => {
     let errors = "";
@@ -112,7 +141,7 @@ app.post("/api/v1/shops/register", async(req,res) => {
                     for(var i=0;i<totalthr;i++){
                         slots=slots+(req.body.numbslot).toString();
                     }
-                    const results = await db.query(`INSERT INTO seller (name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values($1, $2, $3, $4, $5, $6,$7,$8,$9,$10) returning *`,
+                    const results = await db.query(`INSERT INTO seller (imgname,name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,$7,$8,$9,$10) returning *`,
                     [req.body.name, req.body.gst,req.body.detail, req.body.location, req.body.opentime,totalthr,req.body.servicetime,req.body.numbslot ,slots ,req.body.password]);
                     res.status(201).json({
                     status: "success",
@@ -121,17 +150,6 @@ app.post("/api/v1/shops/register", async(req,res) => {
                     },
                 });
             }
-                /*
-                    const results = await db.query(
-                    `INSERT INTO customer (imgname, name, email, address, contact, location, password) values($1, $2, $3, $4, $5, $6) returning *`,
-                    [imgname, name, email, address, contact, location, password]);
-                res.status(201).json({
-                    status: "success",
-                    data: {
-                        user: results.rows[0],
-                    },
-                });
-                }*/
             }
         }catch(err){
             console.log(err);
@@ -143,6 +161,20 @@ app.post("/api/v1/shops/register", async(req,res) => {
 });
 // Update shop
 app.put("/api/v1/shops/:id", async(req,res) =>{
+    try{
+        const results = await db.query(`UPDATE seller SET slots = $1 where id=$2 returning *`, [req.body.slot, req.params.id]);
+        res.status(200).json({
+            status: "success",
+            data:{
+                shops: results.rows[0],
+            },
+        });
+    }catch(err){
+        console.log(err);
+    }
+});
+//update a product
+app.put("/api/v1/product/update/:id", async(req,res) =>{
     try{
         const results = await db.query(`UPDATE seller SET slots = $1 where id=$2 returning *`, [req.body.slot, req.params.id]);
         res.status(200).json({
@@ -188,7 +220,7 @@ app.put("/api/v1/seller/login", async (req,res) => {
     try{
         const results = await db.query(`SELECT * FROM seller WHERE name = $1`,[req.body.name]);
         if (results.rows.length > 0){
-            const sresults = await db.query(`SELECT * FROM seller WHERE password = $1`,[req.body.password]);
+            const sresults = await db.query(`SELECT * FROM seller WHERE name=$1 and password = $2`,[req.body.name,req.body.password]);
             if (sresults.rows.length == 1){
                 res.status(201).json({
                     status: "success",
@@ -250,10 +282,13 @@ app.post("/api/v1/user/register", async (req,res) => {
 });
 //add product
 app.post("/api/v1/shops/:id/add", async (req,res) => {
-    try {const res = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`)
+    try {const resu = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`);
+    if(req.body.producttime==''){
+        req.body.producttime=null;
+    }    
         const results = await db.query(
-            `INSERT INTO product (name, detail, sellername, price, producttime, seller, live) values($1, $2, $3, $4, $5, $6, $7) returning *`,
-            [req.body.name, req.body.detail,res, req.body.price, req.body.producttime, req.params.id, req.body.live]);
+            `INSERT INTO product (imgname,name, detail, sellername, price, producttime, seller, live) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,TRUE) returning *`,
+            [req.body.name, req.body.detail,resu.rows[0].name, req.body.price, req.body.producttime, req.params.id]);
         res.status(201).json({
             status: "success",
             data: {
@@ -343,7 +378,8 @@ app.put("/api/v1/user/:id/cart", async(req,res) =>{
 });
 //adding slot to cart by updating from slot page from cart page
 app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
-    try{const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and c.seller=$2`, [req.params.id, req.params.sid]);
+    try{const loc = await db.query(`select location from seller where id=${req.params.sid}`);
+        const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc]);
         let unique_array = []
         for(let i = 0;i < results.rows.length; i++){
             if(unique_array.indexOf(results.rows[i].slot) == -1){
@@ -426,7 +462,8 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
 });
 //getting myslots
 app.get("/api/v1/user/:user/cart/:id", async(req,res) =>{
-    try{const results = await db.query(`select c.cid,c.slot,p.name from cart c left join product p  on c.product=p.id where c.cuser=$1 and c.seller=$2 and c.slot is not null`, [req.params.user, req.params.id]);
+    try{const loc = await db.query(`select location from seller where id=${req.params.id}`);
+        const results = await db.query(`select c.cid,c.slot,p.name from cart c left join seller s  on c.seller=s.id where c.cuser=$1 and s.location=$2 and c.slot is not null`, [req.params.user, loc]);
         res.status(200).json({
             status: "success",
             data:{

@@ -31,8 +31,7 @@ const SellerLogin = () => {
                 };
             }else{
                 setUser(Login.data.data.user);
-                console.log(user.id);
-                Cookies.set("user",user.id);
+                Cookies.set("user",Login.data.data.user.id);
                 Auth.setAuth(true);
                 history.push("/shops/Dash");
             };

@@ -19,22 +19,21 @@ const Shops = (props) => {
     const handleShopSelect = (id) => {
         history.push(`/shops/${id}`);
     };
-    return(
-        <div className="row row-cols-4 mb-2">
-            <div className="card-deck">
+    return(<div className="container" style={{maxWidth: "110%"}}>
+            <div className="row row-cols-4 mb-2" style={{position:"absolute",marginLeft:"30px"}}>
                 {shops  && shops.map(shop =>{ 
                     return(
-                        <div  key={shop.id} className="card text-white bg-success mb-3" style={{maxWidth:"60%",height:"20rem"}} onClick={() => handleShopSelect(shop.id)} key={shop.id}>
-                            <img src={`/uploads${shop.imgname}`} className="card-img-top" alt="no image"/>
-                            <div class="card-body">
+                        <div className="card text-white bg-success mb-3 text-center col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2" style={{marginRight:"6px",marginLeft:"30px"}} onClick={() => handleShopSelect(shop.id)} key={shop.id}>
+                            <img src={`/uploads/${shop.imgname}`} className="card-img-top" alt="image missing" />
+                            <div className="card-body">
                                 <div className="card-title">{shop.name}</div>
                                 <div className="card-text">{shop.detail}</div>
                             </div> 
                         </div>
                     );
                 })}
+            </div>
             </div>          
-        </div>
     );
 };
 

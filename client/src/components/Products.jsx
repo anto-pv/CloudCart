@@ -22,14 +22,15 @@ const Products = ({ products }) => {
         }; 
     };
     return(
-        <div className="row row-cols-3 mb-2">
-            <div className="card-deck">
+        <div className="container" style={{maxWidth: "110%"}}>
+            <div className="row row-cols-4 mb-2" style={{position:"absolute",marginLeft:"30px"}}>
             {products.map((product) => {
                 return(
-                    <div key={product.id} className="card mb=3" style={{maxWidth:"60%"}}>
+                    <div key={product.id} className="card text-white bg-info mb-3 text-center col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-2" style={{marginRight:"6px",marginLeft:"6px"}}>
                         <div className="card-header">
                             <span>{product.name}</span>
                         </div>
+                        <img src={`/uploads/${product.imgname}`} className="card-img-top" alt="image missing" />
                         <div className="card-body">
                             <p className="ard-text">{product.detail}</p>
                             <p className="card-text">{product.price*selectedValue}</p>

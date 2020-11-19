@@ -15,6 +15,8 @@ import Checkout from './routes/Checkout';
 import SellerLogin from './routes/SellerLogin';
 import SellerReg from './routes/SellerReg';
 import Slot from './routes/Slot';
+import UpdateProduct from './components/UpdateProduct';
+import Service from './components/Services';
 
 const App = () => {
 
@@ -50,7 +52,9 @@ const Routes = () =>{
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
             <ProtectedRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
+            <ProtectedRoute exact path="/products/:id" auth={Auth.auth} component ={UpdateProduct}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
+            <ProtectedRoute exact path="/shops/search/:id" auth={Auth.auth} component ={Service}/>
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
             <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>

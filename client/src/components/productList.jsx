@@ -3,15 +3,16 @@ import {useHistory} from "react-router-dom";
 import  ShopFinder from '../apis/ShopFinder'
 import { ShopContext } from '../context/ShopContext';
 import Cookies from 'js-cookie';
-const user = Cookies.get("user");
 const ProductList = (props) => {
-    const {selproducts, setselProducts} = useContext(ShopContext);
+    const {selProducts, setselProducts} = useContext(ShopContext);
     let history = useHistory();
     useEffect(()=>{
         const fetchData = async() =>{
-            try{console.log("iam",user,"in here")
+            try{const user = Cookies.get("user");
+                console.log("iam",user,"in here");
                 const response = await ShopFinder.get(`/shops/${user}`);
                 setselProducts(response.data.data.products);
+                console.log(selProducts,response.data.data.products);
             }catch(err){
                 console.log(err);
             };
@@ -23,56 +24,34 @@ const ProductList = (props) => {
         try {
             const response = await ShopFinder.delete(`/product/${pid}`);
             console.log(response);
-            setselProducts(selproducts.filter(selproduct => {
-                return selproduct.id !== pid;
+            setselProducts(selProducts.filter(selProduct => {
+                return selProduct.id !== pid;
             }));
         }catch (err) {
             console.log(err);
         };
     };
-    /*const handleUpdate = async(e, pid) =>{
+    const handleProductSelect = (e,pid) => {
         e.stopPropagation();
-        try {
-            const response = await ShopFinder.put(`/product/${pid}`,{
-                //price:,
-                //producttime:,
-                //live
-            });
-        }catch (err) {
-            console.log(err);
-        };
-    };*/
+        history.push(`/products/${pid}`);
+    };
     return(
-        <div className="list-group">
-            <table className="table table-hover table-dark">
-                <thead>
-                    <tr className="bg-primary">
-                        <th scope="col">Restaurant</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Price_Range</th>
-                        <th scope="col">Ratings</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {selproducts && selproducts.map(selproduct=>{
-                        return(<tr key={selproduct.id}>
-                            <td>{selproduct.name}</td>
-                            <td>{selproduct.sellername}</td>
-                            <td>{selproduct.price}</td>
-                            <td>reviews</td>
-                            <td>
-                            <button className="btn btn-warning">Update</button>
-                            </td>
-                            <td>
-                            <button onClick={(e) => handleDelete(e, selproduct.id)} className="btn btn-danger">Delete</button>
-                            </td>
-                        </tr>
+        <div className="container" style={{maxWidth: "120%",paddingRight:"550px",marginRight:"150px"}}>
+        <div className="row row-cols-4 mb-2" style={{position:"absolute"}}>
+                    {selProducts && selProducts.map(selProduct=>{
+                        console.log(selProduct);
+                        return(
+                            <div key={selProduct.id} className="card text-white bg-info mb-3 text-center col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-3" style={{marginRight:"6px",marginLeft:"30px"}} onClick={(e) => handleProductSelect(e, selProduct.id)}>
+                        <img src={`/uploads/${selProduct.imgname}`} className="card-img-top" alt="image missing" />
+                        <div className="card-body">
+                            <div className="card-title">{selProduct.name}</div>
+                        <div className="card-text">{selProduct.detail}<p>{selProduct.price} RS</p></div>
+                        </div> 
+                            <button onClick={(e) => handleDelete(e, selProduct.id)} className="btn btn-danger">Delete</button>
+                            </div>
                         );
                     })}
-                </tbody>
-            </table>
+                </div>
         </div>
     );
 };
