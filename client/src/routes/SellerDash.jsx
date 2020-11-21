@@ -11,7 +11,7 @@ toast.configure()
 const Dash = () => {
     let history = useHistory();
     const [file, setFile] = useState("");
-    const [filename, setFilename] = useState('Choose File:');
+    const [filename, setFilename] = useState('Choose shop image for display:');
     const onChange =e =>{
         setFile(e.target.files[0]);
         setFilename(e.target.files[0].name);
@@ -26,7 +26,7 @@ const Dash = () => {
                 }
             });
             toast.success("Image successfully Uploaded");
-            history.push("/shops/Dash");
+            
         }catch(err){
             if(err.response.status === 500){
               toast.error('image is not uploaded correctly');

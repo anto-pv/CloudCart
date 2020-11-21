@@ -1,10 +1,11 @@
-import React,{useEffect, useContext} from 'react';
+import React,{useEffect, useContext, useState} from 'react';
 import {useHistory} from "react-router-dom";
 import  ShopFinder from '../apis/ShopFinder'
 import { ShopContext } from '../context/ShopContext';
 import Cookies from 'js-cookie';
 const ProductList = (props) => {
     const {selProducts, setselProducts} = useContext(ShopContext);
+    const [shop,setShop]= useState('');
     let history = useHistory();
     useEffect(()=>{
         const fetchData = async() =>{
@@ -12,6 +13,7 @@ const ProductList = (props) => {
                 console.log("iam",user,"in here");
                 const response = await ShopFinder.get(`/sel/shops/${user}`);
                 setselProducts(response.data.data.products);
+                setShop(response.data.data.shop)
             }catch(err){
                 console.log(err);
             };
@@ -42,13 +44,15 @@ const ProductList = (props) => {
         }
     }
     return(
-        <div className="container" style={{maxWidth: "120%",paddingRight:"550px",marginRight:"150px"}}>
+        <div className="container" style={{maxWidth: "120%",paddingRight:"50px",marginRight:"150px"}}>
+            <h1 className="text-center display-1" style={{marginLeft:"120px",marginRight:"40px"}} ><center>{shop.name}</center></h1>
+            <img src={`/uploads/${shop.imgname}`}  style={{marginLeft:"220px",marginRight:"40px",border: "1px solid #ddd" , borderRadius: "4px", padding:"5px", height: "350px"}} alt="image missing" />
         <div className="row row-cols-4 mb-2" style={{position:"absolute"}}>
                     {selProducts && selProducts.map(selProduct=>{
                         console.log(selProduct);
                         return(
                             <div key={selProduct.id} className="card text-white bg-info mb-3 text-center col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-3" style={{marginRight:"6px",marginLeft:"30px"}} onClick={(e) => handleProductSelect(e, selProduct.id)}>
-                        <img src={`/uploads/${selProduct.imgname}`} className="card-img-top" alt="image missing" />
+                        <img src={`/uploads/${selProduct.imgname}`} className="card-img-top" style={{border: "1px solid #ddd" , borderRadius: "4px", padding:"5px", height: "200px"}} alt="image missing" />
                         <div className="card-body">
                             <div className="card-title">{selProduct.name}</div>
                         <button className="btn btn-info">{live(selProduct.live)}</button>

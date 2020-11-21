@@ -158,13 +158,13 @@ const FrontPage = () => {
                 <h1 style={h1}>Book what you need & Get it when you like.</h1>
                 <div style={{marginLeft:"200px"}}>
                 <button className="cmn_btn" style={cmn_btn} onClick={register} id="myBtn">
-                  Register
+                 User  Register
                 </button>{" "}
                 <button className="cmn_btn" style={cmn_btn} onClick={login} id="#login">
-                  Login
+                  User Login
                 </button>
                 <button className="cmn_btn" style={cmn_btn} onClick={seller} id="#seller">
-                  Seller
+                  Seller Login
                 </button></div>
               </div>
             </div>
@@ -242,46 +242,7 @@ const FrontPage = () => {
                 <h4>Contact Us</h4>
               </div>
               <div className="contact_form" style={contact_form}>
-                <form action="get">
-                  <input
-                    className="form-control p-3 name"
-                    type="text"
-                    onChange={e =>setName(e.target.value)}
-                    placeholder="Your Name*"
-                  />
-                  <br />
-                  <input
-                    className="form-control p-3 email"
-                    type="email"
-                    onChange={e =>setEamil(e.target.value)}
-                    placeholder="Email*"
-                  />
-                  <br />
-                  <textarea
-                    className="form-control sms"
-                    name=""
-                    id="meesage"
-                    onChange={e =>setMessage(e.target.value)}
-                    cols="30"
-                    rows="2"
-                    placeholder="Message"
-                  ></textarea>
-                  <br />
-                  <button
-                    type="submit"
-                    onClick={handleSubmit}
-                    className="btn btn-dark c_btn"
-                    style={{
-                      float: "left",
-                      padding: "14px 18px",
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                      borderRadius: "25px"
-                    }}
-                  >
-                    Send
-                  </button>
-                </form>
+              <p> ClouCart1244@gmail.com{"            "}</p><p>antopv833@gmail.com{"        "}</p><p>yadhuk@gmail.com{"   "} </p><p>vivehmohan@gmail.com</p>
               </div>
             </div>
           </div>

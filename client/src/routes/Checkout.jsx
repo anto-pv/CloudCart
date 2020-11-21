@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Paypal from '../components/Paypal';
 const Checkout = () => {
     let history=useHistory();
     let {id,cipher} =useParams();
@@ -11,8 +12,8 @@ const Checkout = () => {
 
     });
     const paypal =() =>{
-        history.push("https://www.paypal.com/in");
-    }
+        return(<Paypal/>)
+    };
     const handleSubmit=()=>{
         var ele = document.getElementsByName('paymentMethod');    
             for(var j = 0; j < ele.length; j++) { 
@@ -71,14 +72,10 @@ const Checkout = () => {
                         <ul className="list-group mb-3">
                             
                             <li className="list-group-item d-flex justify-content-between bg-light">
-                                <div className="text-success">
-                                    <h6 className="my-0">Promo code</h6>
-                                    <small>EXAMPLECODE</small>
-                                </div>
-                                <span className="text-success">-$5</span>
+            
                             </li>
                             <li className="list-group-item d-flex justify-content-between">
-                                <span>Total (USD)</span>
+                                <span>Total</span>
                             <strong>{total}</strong>
                             </li>
                         </ul>
@@ -107,18 +104,6 @@ const Checkout = () => {
                                     <input type="text" className="form-control" id="lastName" placeholder="Last name" required/>
                                     <div className="invalid-feedback">
                                     Valid last name is required.
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="username">Username</label>
-                                <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text">@</span>
-                                    </div>
-                                    <input type="text" className="form-control" id="username" placeholder="Username" required/>
-                                    <div className="invalid-feedback" style={{width: "100%"}}>
-                                    Your username is required.
                                     </div>
                                 </div>
                             </div>

@@ -32,7 +32,7 @@ const Products = ({ products }) => {
                         <div className="card-header">
                             <span>{product.name}</span>
                         </div>
-                        <img src={`/uploads/${product.imgname}`} className="card-img-top" alt="image missing" />
+                        <img src={`/uploads/${product.imgname}`} style={{border: "1px solid #ddd" , borderRadius: "4px", padding:"5px", height: "200px"}} className="card-img-top" alt="image missing" />
                         <div className="card-body">
                             <p className="ard-text">{product.detail}</p>
                             <p className="card-text">{product.price*selectedValue}</p>

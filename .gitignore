@@ -4,3 +4,4 @@ others
 server/node_modules
 server/.env
 client/public/uploads
+client/src/components/Paypal.js

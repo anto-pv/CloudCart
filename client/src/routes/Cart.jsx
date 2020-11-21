@@ -253,7 +253,7 @@ const Cart = () => {
         //want to modify here that if he have time to buy then buy
         try {
             const usedslot = await ShopFinder.get(`/user/${id}/cart/${sid}`);
-                console.log(usedslot.data.data.slots);
+                console.log("here",usedslot.data.data.slots);
                 if(usedslot.data.data.slots.length>0){
                     const Login = await ShopFinder.put(`/user/${id}/cart/${sid}`);
                     history.push(`/shops/${sid}/slot`);

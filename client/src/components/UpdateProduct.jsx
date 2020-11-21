@@ -119,7 +119,7 @@ const UpdateProduct = () => {
         <div>  
         <header id="main-header" style={mainHeader}>
         <div>
-        <img src={`/uploads/${imgname}`} alt="image missing" />
+        <img src={`/uploads/${imgname}`}  style={{border: "1px solid #ddd" , borderRadius: "4px", padding:"5px", height: "300px"}} alt="image missing" />
            <form ><div className='custom-file mb-4'>
         <input type='file' className='custom-file-input' id='customFile' onChange={onChange}/>
         <label className='custom-file-label' htmlFor='customFile'>{filename}</label>

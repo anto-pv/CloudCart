@@ -397,12 +397,15 @@ app.get("/api/v1/shops/:id/slot", async (req,res) =>{
 //adding slot to cart by updating from slot page 
 app.put("/api/v1/user/:id/cart", async(req,res) =>{
     try{const results = await db.query(`select producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is null and c.seller=$2`, [req.params.id, req.body.seller]);
-        console.log(req.params.id, req.body.seller,req.body.slot);
+        console.log(req.params.id, req.body.seller,req.body.slot,results.rows);
         let errors = "";
         var hour=0;
         var minute=0;
         var second=0;
         for(var i=0;i<(results.rows.length);i++){
+            if(results.rows[i].producttime==null){
+                results.rows[i].producttime='00:00:00';
+            }
             var splitTime= results.rows[i].producttime.split(':');
             hour = hour+parseInt(splitTime[0]);
             minute = minute+parseInt(splitTime[1]);
@@ -434,8 +437,9 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
     try{console.log("gee");
         const loc = await db.query(`select location from seller where id=${req.params.sid}`);
         console.log(loc,req.params.id,req.params.sid);
-        const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc]);
+        const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc.rows[0].location]);
         let unique_array = []
+        console.log(results.rows);
         for(let i = 0;i < results.rows.length; i++){
             if(unique_array.indexOf(results.rows[i].slot) == -1){
                 unique_array.push(results.rows[i].slot)
@@ -461,6 +465,9 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
             for(var j=0;j<(results.rows.length);j++){
                 console.log("i for loop 2");
                 if(results.rows[j].slot==unique_array[i]){
+                    if(results.rows[j].producttime==null){
+                        results.rows[j].producttime='00:00:00';
+                    }
                     splitTime= results.rows[j].producttime.split(':');
                     hour = hour+parseInt(splitTime[0]);
                     minute = minute+parseInt(splitTime[1]);
@@ -484,6 +491,9 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
             };
             const prresults = await db.query(`select producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is null and c.seller=$2`, [req.params.id, req.body.seller]);
             for(var k=0;k<(prresults.rows.length);k++){
+                if(prresults.rows[k].producttime==null){
+                    prresults.rows[k].producttime='00:00:00';
+                }
                 console.log("i for loop 3");
                 splitTime= prresults.rows[k].producttime.split(':');
                 hour = hour+parseInt(splitTime[0]);
@@ -518,7 +528,9 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
 //getting myslots
 app.get("/api/v1/user/:user/cart/:id", async(req,res) =>{
     try{const loc = await db.query(`select location from seller where id=${req.params.id}`);
-        const results = await db.query(`select c.cid,c.slot,p.name from cart c left join seller s on c.seller=s.id left join product p on c.product=p.id where c.cuser=$1 and s.location=$2 and c.slot is not null`, [req.params.user, loc]);
+    console.log("loc",loc.rows[0].location,req.params.user);
+        const results = await db.query(`select c.cid,c.slot,p.name from cart c left join seller s on c.seller=s.id left join product p on c.product=p.id where c.cuser=$1 and s.location=$2 and c.slot is not null`, [req.params.user, loc.rows[0].location]);
+        console.log("res",results.rows);
         res.status(200).json({
             status: "success",
             data:{
@@ -571,7 +583,7 @@ app.get("/api/v1/user/:id/order", async (req,res) =>{
 //seller orders
 app.get("/api/v1/seller/:id/order", async (req,res) =>{
     try{//and also make condition on paid=false
-        const results = await db.query(`SELECT * FROM cart c left join product c on c.product=p.id WHERE p.seller=$1 and c.paid='True'`,[req.params.id]);
+        const results = await db.query(`SELECT * FROM cart c left join product p on c.product=p.id WHERE p.seller=$1 and c.paid='True'`,[req.params.id]);
         res.status(200).json({
             status: "success",
             data: {
