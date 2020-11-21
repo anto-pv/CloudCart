@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ShopFinder from '../apis/ShopFinder';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
 const Register = () => {
     let history = useHistory();
     const [username, setName] = useState("");
@@ -37,7 +40,7 @@ const Register = () => {
                     };
                 };
             }else{
-                alert("You are Registered");
+                toast.success("You are Registered");
                 history.push('/user/login');
             };
         } catch(err) {
@@ -96,8 +99,7 @@ const Register = () => {
         borderBottom: "1px solid #e0e2e6",
         borderRadius: "0px",
         marginTop: "10px",
-        color: "#cacdd2",
-        opacity: "0.7",
+        opacity: "1",
         "&::focus": {
           borderBottom: "1px solid #f54336",
           outline: "none",
@@ -148,7 +150,7 @@ const Register = () => {
               <div className="form-group" style={formGroup}>
               <p className="">
                   Already have an account?
-                  <a href="login" onClick={login}>
+                  <a onClick={login}>
                     {" "}
                     Login
                   </a>

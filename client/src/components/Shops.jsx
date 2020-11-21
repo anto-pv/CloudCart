@@ -27,7 +27,7 @@ const Shops = (props) => {
                             <img src={`/uploads/${shop.imgname}`} className="card-img-top" alt="image missing" />
                             <div className="card-body">
                                 <div className="card-title">{shop.name}</div>
-                                <div className="card-text">{shop.detail}</div>
+                                <div className="card-text">{shop.location}</div>
                             </div> 
                         </div>
                     );

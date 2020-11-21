@@ -4,6 +4,7 @@ const cors = require("cors");
 const db = require("./db"); 
 const path = require('path');
 const fileUpload = require('express-fileupload');
+const nodemailer = require('nodemailer');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,7 +22,34 @@ app.put("/api/v1/shops/:id/upload", async (req,res)=>{
                 return res.status(500).send(err);
             }
         });
+        console.log(file.name);
         const results = await db.query(`UPDATE seller SET imgname = $1 where id=$2 returning *`, [file.name, req.params.id]);
+        res.status(200).json({
+        status: "success",
+                data:{
+                shops: results.rows[0],
+            },
+
+            });
+    }catch(err){
+        console.log(err);
+    }
+});
+app.put("/api/v1/products/:id/upload", async (req,res)=>{
+    try{
+    if(req.files===null){
+        return res.status(400).json({ msg: 'No file Uploaded'});
+    }
+    const file = req.files.file;
+    file.name= file.name.split(path.extname(file.name))[0]+'-'+Date.now()+path.extname(file.name);
+    file.mv(`../client/public/uploads/${file.name}`,err =>{
+        if(err){
+                console.error(err);
+                return res.status(500).send(err);
+            }
+        });
+        console.log(file.name);
+        const results = await db.query(`UPDATE product SET imgname = $1 where id=$2 returning *`, [file.name, req.params.id]);
         res.status(200).json({
         status: "success",
                 data:{
@@ -68,6 +96,24 @@ app.get("/api/v1/shops/:id", async(req,res)=>{
         console.log(err);
     };};
 });
+//Get a shop in seller
+app.get("/api/v1/sel/shops/:id", async(req,res)=>{
+    if((req.params.id)!="Dash"){
+        console.log(typeof(parseInt(req.params.id)));
+    try{
+        const shop = await db.query(`SELECT * FROM seller WHERE id = $1`,[req.params.id]);
+        const products = await db.query(`SELECT * FROM product WHERE (seller = $1)`,[req.params.id]);
+        res.status(200).json({
+            status: "sucsess",
+            data: {
+                shop: shop.rows[0],
+                products: products.rows
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    };};
+});
 //Get a shop product in seller
 app.get("/api/v1/shops/:id/product/:pid", async(req,res)=>{
     try{
@@ -84,9 +130,10 @@ app.get("/api/v1/shops/:id/product/:pid", async(req,res)=>{
 });
 //Get all shops on search
 app.get("/api/v1/shops/search/:id", async (req,res) =>{
-    try{
-        const results = await db.query(`SELECT * FROM seller where location  like '%' || $1 || '%' or name like '%' || $2 || '%' or detail like '%' || $3 || '%'`,[req.params.id ,req.params.id ,req.params.id]);
-        const services = await db.query(`SELECT * FROM product WHERE (name like '%' || $1 || '%' or detail like '%' || $2 || '%')`,[req.params.id, req.params.id]);
+    try{var det=req.params.id;
+        req.params.id=(req.params.id).toUpperCase();
+        const results = await db.query(`SELECT * FROM seller where location  like '%' || $1 || '%' or name like '%' || $2 || '%' or detail like '%' || $3 || '%'`,[req.params.id ,req.params.id ,det]);
+        const services = await db.query(`SELECT * FROM product WHERE (name like '%' || $1 || '%' or detail like '%' || $2 || '%')`,[req.params.id, det]);
         res.status(200).json({
             status: "success",
             results: results.rows.length,
@@ -141,6 +188,8 @@ app.post("/api/v1/shops/register", async(req,res) => {
                     for(var i=0;i<totalthr;i++){
                         slots=slots+(req.body.numbslot).toString();
                     }
+                    req.body.name=(req.body.name).toUpperCase();
+                    req.body.location=(req.body.location).toUpperCase();
                     const results = await db.query(`INSERT INTO seller (imgname,name, gst, detail, location, opentime, totalthr, servicetime, numbslot,slots, password) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,$7,$8,$9,$10) returning *`,
                     [req.body.name, req.body.gst,req.body.detail, req.body.location, req.body.opentime,totalthr,req.body.servicetime,req.body.numbslot ,slots ,req.body.password]);
                     res.status(201).json({
@@ -217,7 +266,7 @@ app.put("/api/v1/user/login", async (req,res) => {
 //login seller
 app.put("/api/v1/seller/login", async (req,res) => {
     let errors = "";
-    try{
+    try{req.body.name=(req.body.name).toUpperCase();
         const results = await db.query(`SELECT * FROM seller WHERE name = $1`,[req.body.name]);
         if (results.rows.length > 0){
             const sresults = await db.query(`SELECT * FROM seller WHERE name=$1 and password = $2`,[req.body.name,req.body.password]);
@@ -282,10 +331,12 @@ app.post("/api/v1/user/register", async (req,res) => {
 });
 //add product
 app.post("/api/v1/shops/:id/add", async (req,res) => {
+    console.log(req.params.id,req.body);
     try {const resu = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`);
     if(req.body.producttime==''){
         req.body.producttime=null;
-    }    
+    };    
+    req.body.name=(req.body.name).toUpperCase();
         const results = await db.query(
             `INSERT INTO product (imgname,name, detail, sellername, price, producttime, seller, live) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,TRUE) returning *`,
             [req.body.name, req.body.detail,resu.rows[0].name, req.body.price, req.body.producttime, req.params.id]);
@@ -300,15 +351,17 @@ app.post("/api/v1/shops/:id/add", async (req,res) => {
     }
 });
 // Update Product
-app.put("/api/v1/product/:id", async(req,res) =>{
-    try{
-        const results = await db.query(`UPDATE product SET price= $1, producttime= $2,live=$3 where id=$4 returning *`, [req.body.price, req.body.producttime, req.body.live, req.params.id]);
+app.put("/api/v1/product/update/add/:id", async(req,res) =>{
+    try{console.log("Updating");
+    req.body.name=(req.body.name).toUpperCase();
+        const results = await db.query(`UPDATE product SET name=$1, price= $2, producttime= $3,live=$4 where id=$5 returning *`, [req.body.name,req.body.price, req.body.producttime, req.body.live, req.params.id]);
         res.status(200).json({
             status: "success",
             data:{
                 product: results.rows[0],
             },
         });
+        console.log(results);
     }catch(err){
         console.log(err);
     }
@@ -378,7 +431,9 @@ app.put("/api/v1/user/:id/cart", async(req,res) =>{
 });
 //adding slot to cart by updating from slot page from cart page
 app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
-    try{const loc = await db.query(`select location from seller where id=${req.params.sid}`);
+    try{console.log("gee");
+        const loc = await db.query(`select location from seller where id=${req.params.sid}`);
+        console.log(loc,req.params.id,req.params.sid);
         const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc]);
         let unique_array = []
         for(let i = 0;i < results.rows.length; i++){
@@ -463,7 +518,7 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
 //getting myslots
 app.get("/api/v1/user/:user/cart/:id", async(req,res) =>{
     try{const loc = await db.query(`select location from seller where id=${req.params.id}`);
-        const results = await db.query(`select c.cid,c.slot,p.name from cart c left join seller s  on c.seller=s.id where c.cuser=$1 and s.location=$2 and c.slot is not null`, [req.params.user, loc]);
+        const results = await db.query(`select c.cid,c.slot,p.name from cart c left join seller s on c.seller=s.id left join product p on c.product=p.id where c.cuser=$1 and s.location=$2 and c.slot is not null`, [req.params.user, loc]);
         res.status(200).json({
             status: "success",
             data:{
@@ -488,7 +543,35 @@ app.delete("/api/v1/user/:id/cart/:cid", async (req,res) =>{
 //cart
 app.get("/api/v1/user/:id/cart", async (req,res) =>{
     try{//and also make condition on paid=false
-        const results = await db.query(`SELECT * FROM cart left join product on product=product.id WHERE cuser=${req.params.id}`);
+        const results = await db.query(`SELECT * FROM cart left join product on product=product.id WHERE cuser=$1 and paid='False'`,[req.params.id]);
+        res.status(200).json({
+            status: "success",
+            data: {
+                carts: results.rows,
+            },
+        });
+    }catch(err){
+        console.log(err);
+    };
+});
+//orders
+app.get("/api/v1/user/:id/order", async (req,res) =>{
+    try{//and also make condition on paid=false
+        const results = await db.query(`SELECT * FROM cart left join product on product=product.id WHERE cuser=$1 and paid='True'`,[req.params.id]);
+        res.status(200).json({
+            status: "success",
+            data: {
+                carts: results.rows,
+            },
+        });
+    }catch(err){
+        console.log(err);
+    };
+});
+//seller orders
+app.get("/api/v1/seller/:id/order", async (req,res) =>{
+    try{//and also make condition on paid=false
+        const results = await db.query(`SELECT * FROM cart c left join product c on c.product=p.id WHERE p.seller=$1 and c.paid='True'`,[req.params.id]);
         res.status(200).json({
             status: "success",
             data: {
@@ -526,6 +609,47 @@ app.delete("/api/v1/product/:id", async (req,res) =>{
     }catch(err){
         console.log(err);
     }
+});
+app.post('/api/v1/mail',(req,res) =>{
+    console.log(req.body);
+    const output= `
+    <h1> CloudCart</h1>
+    <h2>User Info:</h2>
+    <ul>
+        <li>User Name: ${req.body.name}</li>
+        <li>User Email: ${req.body.mail}</li>
+    </ul>
+    <img style="width:300px; height: 300px;"  src="cid:logo" alt="Image Not available">
+    <h3>Message</h3>
+    <p>${req.body.message}</p>
+    `;
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+        user: 'cloudcart421@gmail.com', // generated ethereal user
+        pass: 'Anto@2020', // generated ethereal password
+        },
+        tls:{
+            rejectUnauthorized: false
+        }
+    });
+
+    // send mail with defined transport object
+    let info = transporter.sendMail({
+        from: '"CloudCart" <cloudcart421@gmail.com>', // sender address
+        to: 'antopv19@gmail.com', // list of receivers
+        subject: "MPAC Contact", // Subject line
+        text: "Contact Message", // plain text body
+        html: output,
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+    // Preview only available when sending through an Ethereal account
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 });
 const port = process.env.PORT || 3005;
 app.listen(port, () =>{

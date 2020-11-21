@@ -6,7 +6,7 @@ import { ShopContext } from '../context/ShopContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 toast.configure()
-const Cart = () => {
+const Order = () => {
     const shopcart = {
         paddingTop: "70px",
         paddingBottom: "90px",
@@ -208,7 +208,7 @@ const Cart = () => {
     useEffect(()=>{
         const fetchData = async() =>{
             try{ 
-                const response= await ShopFinder.get(`/user/${id}/cart`);
+                const response= await ShopFinder.get(`/user/${id}/order`);
                 setCart(response.data.data.carts);
             }catch(err){
                 console.log(err);
@@ -216,62 +216,6 @@ const Cart = () => {
         };
         fetchData();
     },[]);
-    const handleDelete = async (e, cid) =>{
-        console.log("reporrt1");
-        e.stopPropagation();
-        try {
-            const response = await ShopFinder.delete(`/user/${id}/cart/${cid}`);
-            setCart(cart.filter(cart => {
-                return cart.cid !== cid;
-            }));
-        }catch (err) {
-            console.log(err);
-        };
-    };
-    const checkout = async(e,total)=> {
-        try{
-            const checkou = await ShopFinder.get(`/user/${id}/cart`);
-            var result=0;
-            for(var i=0;i<checkou.data.data.carts.length;i++){
-                if(checkou.data.data.carts[i].slot==null){
-                    result=1;
-                    break;
-                }
-            };
-            if(result==1){                
-                toast.warn("Select available slots");
-            }else{
-                toast.success("Complete the checkout to fix the slots");
-                var cipher = (total+15000)*456
-                history.push(`/user/${id}/cart/Checkout/${cipher}`)
-            };
-        }catch(err){
-            console.log(err);
-        };
-    }
-    const bookslot =async(sid) =>{
-        //want to modify here that if he have time to buy then buy
-        try {
-            const usedslot = await ShopFinder.get(`/user/${id}/cart/${sid}`);
-                console.log(usedslot.data.data.slots);
-                if(usedslot.data.data.slots.length>0){
-                    const Login = await ShopFinder.put(`/user/${id}/cart/${sid}`);
-                    history.push(`/shops/${sid}/slot`);
-                    toast.success("Succesfully booked in your owned slot and redirecting to other shop slots");
-                }else{
-                    history.push(`/shops/${sid}/slot`);
-                };
-        } catch(err) {
-            console.log(err);
-        };
-    }
-    const cartslot = (slot,seller) =>{
-        if(slot==null){
-            return(<div><span onClick={() => bookslot(seller)} className="badge badge-danger">No slots</span></div>);
-        }else{
-        return(<div><span className="badge badge-succes">{slot}</span></div>);
-        };
-    };
     return (
         <div>
             <Header />
@@ -304,10 +248,10 @@ const Cart = () => {
                                         <td style={shop__cart__table.tbody.tr.cart__price}>{cart.price}</td>
                                             <td style={shop__cart__table.tbody.tr.cart__price}>{cart.pcount}
                                             </td>
-                                        <td style={shop__cart__table.tbody.tr.cart__price}>{cartslot(cart.slot,cart.seller)}
+                                        <td style={shop__cart__table.tbody.tr.cart__price}><span className="badge badge-succes">{cart.slot}</span>
                                         </td>
                                         <td style={shop__cart__table.tbody.tr.cart__price}>{cart.pcount*cart.price}{total(cart.pcount*cart.price)}</td>
-                                        <td style={shop__cart__table.tbody.tr.cart__close}><span className="fas fa-times-circle" onClick={(e) => handleDelete(e, cart.cid)}></span></td>
+                                        <td style={shop__cart__table.tbody.tr.cart__close}><span className="fas fa-times-circle"></span></td>
                                         </tr>
                                         );
                                     })}
@@ -323,25 +267,9 @@ const Cart = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-lg-6">
-                            <div style={discount__content}>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 offset-lg-2">
-                            <div style={cart__total__procced}>
-                                <h6>Cart total</h6>
-                                <ul>
-                                <li>Subtotal <span>{total(-1)}</span></li>
-                                    <li>Total <span>{total(-1)}</span></li>
-                                </ul>
-                                <button onClick={(e)=>checkout(e,total(-1))}>Proceed to Checkout</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
         </div>
     );
 };
-export default Cart;
+export default Order;

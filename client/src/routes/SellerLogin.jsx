@@ -40,7 +40,7 @@ const SellerLogin = () => {
         };
     };
     const register =()=>{
-        history.push("/shops/register")
+        history.push("/shops/register");
     };
     const mainHeader = {width: "100%",
     maxWidth: "100%",
@@ -144,6 +144,11 @@ const SellerLogin = () => {
           <div className="form-group" style={formGroup}>
             <p className="">
               Don't have an account?<a href="/shops/register" onClick = {register}> Register</a>
+            </p>
+          </div>
+          <div className="form-group" style={formGroup}>
+            <p className="">
+              Are you a user?<a href="/user/login"> User Login</a>
             </p>
           </div>
         </form>

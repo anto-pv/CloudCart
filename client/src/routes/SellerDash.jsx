@@ -5,11 +5,11 @@ import ShopFinder from '../apis/ShopFinder';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useHistory, useParams } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import Header2 from '../components/Header2';
 toast.configure()
 const Dash = () => {
     let history = useHistory();
-    let {id} = useParams();
     const [file, setFile] = useState("");
     const [filename, setFilename] = useState('Choose File:');
     const onChange =e =>{
@@ -19,7 +19,7 @@ const Dash = () => {
     const onSubmit =async () =>{
         const formData = new FormData();
         formData.append('file',file);
-        try{
+        try{const id = Cookies.get("user");
             const res = await ShopFinder.put(`/shops/${id}/upload`, formData,{
                 headers:{
                     'Content-Type': 'multipart/form-data'

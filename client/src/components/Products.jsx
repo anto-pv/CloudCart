@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { useParams } from 'react-router-dom';
 import ShopFinder from '../apis/ShopFinder';
+import { toast } from 'react-toastify';
+toast.configure();
 const Products = ({ products }) => {
     const [selectedValue, setSelectedValue] = useState(3);
     const user = Cookies.get("user");
@@ -16,7 +18,7 @@ const Products = ({ products }) => {
                 paid: false,
             });
             if(cartadd!=undefined){
-            alert("Product added to cart")}
+            toast.success("Product added to cart")}
         } catch(err) {
             console.log(err);
         }; 

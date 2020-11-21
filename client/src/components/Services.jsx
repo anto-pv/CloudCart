@@ -3,6 +3,9 @@ import  ShopFinder from '../apis/ShopFinder';
 import {useHistory, useParams} from "react-router-dom";
 import Cookies from 'js-cookie';
 import Header from "./Header";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
 const Service = (props) => {
     const {id} =useParams();
     const [shops, setShops] = useState('');
@@ -36,7 +39,7 @@ const Service = (props) => {
                 paid: false,
             });
             if(cartadd!=undefined){
-            alert("Product added to cart")}
+            toast.success("Product added to cart")}
         } catch(err) {
             console.log(err);
         }; 
@@ -69,7 +72,7 @@ const Service = (props) => {
                             <p className="ard-text">{product.detail}</p>
                             <p className="card-text">{product.price*selectedValue}</p>
                             <div className="btn-group dropright">
-                                <button type="button" className="btn btn-success" onClick={(e)=>handleSubmit(e, product.id)} data-toggle="modal" ><i className="fas fa-shopping-cart" id="cart-logo"  data-toggle="modal" data-target="#cart"></i></button>
+                                <button type="button" className="btn btn-success" onClick={(e)=>handleSubmit(e, product.id,product.seller)} data-toggle="modal" ><i className="fas fa-shopping-cart" id="cart-logo"  data-toggle="modal" data-target="#cart"></i></button>
                                 <select className="btn btn-info" value={selectedValue} onChange={e =>setSelectedValue(e.target.value)}>
                                   <option disabled>Quantity</option>
                                   <option value="1">1 Qty</option>

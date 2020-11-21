@@ -101,7 +101,8 @@ const Login = () => {
       display: "block",
       paddingTop: "30px",
       marginLeft: "auto",
-      marginRight: "auto"
+      marginRight: "auto",
+      marginTop: "30px"
       }
     return(
         <div>

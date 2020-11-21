@@ -10,9 +10,8 @@ const ProductList = (props) => {
         const fetchData = async() =>{
             try{const user = Cookies.get("user");
                 console.log("iam",user,"in here");
-                const response = await ShopFinder.get(`/shops/${user}`);
+                const response = await ShopFinder.get(`/sel/shops/${user}`);
                 setselProducts(response.data.data.products);
-                console.log(selProducts,response.data.data.products);
             }catch(err){
                 console.log(err);
             };
@@ -35,6 +34,13 @@ const ProductList = (props) => {
         e.stopPropagation();
         history.push(`/products/${pid}`);
     };
+    const live =(val)=>{
+        if(val==true){
+            return(<div>Available</div>);
+        }else{
+            return(<div>Soldout</div>);
+        }
+    }
     return(
         <div className="container" style={{maxWidth: "120%",paddingRight:"550px",marginRight:"150px"}}>
         <div className="row row-cols-4 mb-2" style={{position:"absolute"}}>
@@ -45,6 +51,7 @@ const ProductList = (props) => {
                         <img src={`/uploads/${selProduct.imgname}`} className="card-img-top" alt="image missing" />
                         <div className="card-body">
                             <div className="card-title">{selProduct.name}</div>
+                        <button className="btn btn-info">{live(selProduct.live)}</button>
                         <div className="card-text">{selProduct.detail}<p>{selProduct.price} RS</p></div>
                         </div> 
                             <button onClick={(e) => handleDelete(e, selProduct.id)} className="btn btn-danger">Delete</button>

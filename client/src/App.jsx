@@ -17,6 +17,8 @@ import SellerReg from './routes/SellerReg';
 import Slot from './routes/Slot';
 import UpdateProduct from './components/UpdateProduct';
 import Service from './components/Services';
+import Order from './routes/Orders';
+import SOrder from './routes/SOrders';
 
 const App = () => {
 
@@ -51,14 +53,16 @@ const Routes = () =>{
             <ProtectedLogin exact path="/shops/register" component = {SellerReg}/>
             <ProtectedRoute exact path="/Home" auth={Auth.auth} component ={Home}/>
             <Route exact path="/" component ={FrontPage}/>
-            <ProtectedRoute exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
+            <Route exact path="/shops/Dash" auth={Auth.auth} component ={Dash}/>
+            <ProtectedRoute exact path="/shops/:id/order" auth={Auth.auth} component = {SOrder}/>
             <ProtectedRoute exact path="/products/:id" auth={Auth.auth} component ={UpdateProduct}/>
             <ProtectedRoute exact path="/shops/:id" auth={Auth.auth} component ={ShopDetailPage}/>
             <ProtectedRoute exact path="/shops/search/:id" auth={Auth.auth} component ={Service}/>
             <ProtectedLogin exact path="/user/register" auth={Auth.auth} component ={Register}/>
             <ProtectedRoute exact path="/user/:id/cart" auth={Auth.auth} component = {Cart}/>
+            <ProtectedRoute exact path="/user/:id/order" auth={Auth.auth} component = {Order}/>
             <ProtectedRoute exact path="/shops/:id/slot" auth={Auth.auth} component = {Slot}/>
-            <ProtectedRoute exact path="/user/:id/cart/Checkout/:cipher" auth={Auth.auth} component = {Checkout}/>
+            <Route exact path="/user/:id/cart/Checkout/:cipher" auth={Auth.auth} component = {Checkout}/>
         </Switch>
     );
 };

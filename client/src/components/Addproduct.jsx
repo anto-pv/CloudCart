@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 toast.configure();
-const user = Cookies.get("user");
 const AddProduct = () => {
     const {addProducts} = useContext(ShopContext);
     const [name, setName] = useState("");
@@ -15,7 +14,8 @@ const AddProduct = () => {
     const [producttime, setProducttime]=useState("");
     const handleSubmit = async (e) => {
         e.preventDefault()
-        try {
+        console.log(name,detail,price,producttime);
+        try {const user = Cookies.get("user");
             const response = await ShopFinder.post(`/shops/${user}/add`,{
                 name,
                 detail,

@@ -19,6 +19,12 @@ const Register = () => {
     const handleSubmit = async e => {
       try{
         e.preventDefault();
+        if(opentime==''){
+          setOpentime("09:00:00");
+        }
+        if(closingtime==''){
+          setClosingtime("20:00:00");
+        }
         const response = await ShopFinder.post("/shops/register",{
                 name,
                 gst,

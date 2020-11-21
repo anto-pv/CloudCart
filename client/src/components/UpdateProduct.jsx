@@ -2,15 +2,16 @@ import React, {useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import ShopFinder from "../apis/ShopFinder";
 import Cookies from 'js-cookie';
+import { toast } from "react-toastify";
 const UpdateProduct = () => {
     const {id} = useParams();
     let history = useHistory();
-    const [imgname, setimgName] = useState("");
-    const [name, setName] = useState("");
-    const [detail, setDetail] = useState("");
-    const [price, setPrice] = useState("");
-    const [producttime, setProducttime] = useState("");
-    const [live, setLive] = useState("");
+    const [imgname, setimgName] = useState('');
+    const [name, setName] = useState('');
+    const [detail, setDetail] = useState('');
+    const [price, setPrice] = useState('');
+    const [producttime, setProducttime] = useState('');
+    const [live, setLive] = useState('');
     useEffect(() =>{
         const fetchData = async() =>{
             const user = Cookies.get("user");
@@ -25,11 +26,31 @@ const UpdateProduct = () => {
         fetchData();
     },[]);
     const handleSubmit = async (e) => {
+        const formData = new FormData();
+        formData.append('file',file);
+        try{
+            const res = await ShopFinder.put(`/products/${id}/upload`, formData,{
+                headers:{
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            toast.success("Image successfully Uploaded");
+        }catch(err){
+            if(err.response.status === 500){
+              toast.error('image is not uploaded correctly');
+            }
+        };
+        console.log("Updating");
         e.preventDefault()
         try {
-            const UpdateRestaurant = await ShopFinder.put(`/product/update/${id}`,{
+            const UpdateRestaurant = await ShopFinder.put(`/product/update/add/${id}`,{
                 name,
+                price,
+                detail,
+                producttime,
+                live
             });
+            console.log(UpdateRestaurant);
         } catch(err) {
             console.log(err);
         };
@@ -88,10 +109,24 @@ const UpdateProduct = () => {
              boxShadow: "none"
         }
     };
+    const [file, setFile] = useState("");
+    const [filename, setFilename] = useState('Choose File:');
+    const onChange =e =>{
+        setFile(e.target.files[0]);
+        setFilename(e.target.files[0].name);
+    };
     return(
         <div>  
         <header id="main-header" style={mainHeader}>
+        <div>
         <img src={`/uploads/${imgname}`} alt="image missing" />
+           <form ><div className='custom-file mb-4'>
+        <input type='file' className='custom-file-input' id='customFile' onChange={onChange}/>
+        <label className='custom-file-label' htmlFor='customFile'>{filename}</label>
+
+    </div>
+ </form>
+    </div>
   <div className="form" style={forms}>
             <div className="form-group" style={formGroup}>
                 <label htmlFor="name"><h2 style={h2}>Name</h2></label>

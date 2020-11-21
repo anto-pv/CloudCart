@@ -11,6 +11,7 @@ const Checkout = () => {
 
     });
     const paypal =() =>{
+        history.push("https://www.paypal.com/in");
     }
     const handleSubmit=()=>{
         var ele = document.getElementsByName('paymentMethod');    

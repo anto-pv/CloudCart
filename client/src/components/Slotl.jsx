@@ -2,6 +2,9 @@ import React from 'react';
 import Cookies from 'js-cookie';
 import { useHistory, useParams } from 'react-router-dom';
 import ShopFinder from '../apis/ShopFinder';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
 const Slotl = ({slot,time,slotno,sslot,num}) => {
     const {id} = useParams();
     let history = useHistory();
@@ -14,7 +17,7 @@ const Slotl = ({slot,time,slotno,sslot,num}) => {
         var thr = parseInt(arr[0]);
         var tm = parseInt(arr[1]);
         thr=thr+i;
-        var time= (thr) +":"+tm+":00";
+        time= (thr) +":"+tm+":00";
         if(thr<=hr || parseInt(Array)==0){
             return(<div className="alert alert-warning" role="alert">Sorry...This slots are unavailable now.....  
           </div>);
@@ -43,6 +46,9 @@ const Slotl = ({slot,time,slotno,sslot,num}) => {
         thr=thr+parseInt(i);
         var tslot= thr+":"+"00:00";
         console.log(i,thr,tslot);
+        if(i==undefined){
+            toast.warn("Select an slot first");
+        };
         try {
             const slotconfirm = await ShopFinder.put(`/user/${user}/cart`,{
                 seller: id,

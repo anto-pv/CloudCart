@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import ShopFinder from '../apis/ShopFinder';
 const FrontPage = () => {
     let history = useHistory();
     const login =()=>{
@@ -8,14 +9,15 @@ const FrontPage = () => {
     const register =()=>{
         history.push("/user/register");
     };
-    const sregister =()=>{
-        history.push("/shops/register");
+    const seller =()=>{
+        history.push("/shops/login");
     };
     const h1 = {
         fontFamily: "'Vollkorn', serif",
         fontSize: "45px",
         marginTop: "-12px",
-        marginBottom: "25px"
+        marginBottom: "25px",
+        marginLeft: "250px"
       };
       
       const h3 = {
@@ -83,7 +85,8 @@ const FrontPage = () => {
         border: "none",
         padding: "9px 15px",
         borderRadius: "20px",
-        marginBottom: "100px"
+        marginBottom: "100px",
+        marginRight: "10px"
       };
       
       const gingerbread_house_asterclass = {
@@ -126,7 +129,22 @@ const FrontPage = () => {
         width: "60%",
         margin: "auto"
       };
-      
+      const [name, setName] = useState("");
+      const [email, setEamil] = useState("");
+      const [message, setMessage] = useState("");
+      const handleSubmit = async (e) => {
+        console.log("sdfa");
+        e.preventDefault()
+        try {
+            const mail = await ShopFinder.post(`/mail`,{
+                name,
+                email,
+                message
+            });
+        } catch(err) {
+            console.log(err);
+        };
+    };
     return (<div>
         <div className="banner text-center" style={banner}>
           <img src="/images/logo_new.png" height="150px" width="1000px" alt="logo" style = {{marginLeft :"20px"}}/>
@@ -135,15 +153,19 @@ const FrontPage = () => {
           <br />
           <div className="container">
             <div className="row">
-              <div className="banner_content">
+              <div className="banner_content" style={{paddingRight: "100px"}}>
                 <p></p>
                 <h1 style={h1}>Book what you need & Get it when you like.</h1>
+                <div style={{marginLeft:"200px"}}>
                 <button className="cmn_btn" style={cmn_btn} onClick={register} id="myBtn">
                   Register
                 </button>{" "}
                 <button className="cmn_btn" style={cmn_btn} onClick={login} id="#login">
                   Login
                 </button>
+                <button className="cmn_btn" style={cmn_btn} onClick={seller} id="#seller">
+                  Seller
+                </button></div>
               </div>
             </div>
           </div>
@@ -224,19 +246,22 @@ const FrontPage = () => {
                   <input
                     className="form-control p-3 name"
                     type="text"
+                    onChange={e =>setName(e.target.value)}
                     placeholder="Your Name*"
                   />
                   <br />
                   <input
                     className="form-control p-3 email"
                     type="email"
+                    onChange={e =>setEamil(e.target.value)}
                     placeholder="Email*"
                   />
                   <br />
                   <textarea
                     className="form-control sms"
                     name=""
-                    id=""
+                    id="meesage"
+                    onChange={e =>setMessage(e.target.value)}
                     cols="30"
                     rows="2"
                     placeholder="Message"
@@ -244,6 +269,7 @@ const FrontPage = () => {
                   <br />
                   <button
                     type="submit"
+                    onClick={handleSubmit}
                     className="btn btn-dark c_btn"
                     style={{
                       float: "left",

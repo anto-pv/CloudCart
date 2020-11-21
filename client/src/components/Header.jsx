@@ -17,6 +17,10 @@ const Header = () => {
         const id = Cookies.get("user");
         history.push(`/user/${id}/cart`);
     };
+    const order =()=>{
+      const id = Cookies.get("user");
+      history.push(`/user/${id}/order`);
+  };
     const idnav = {
         background: "#222",
         overflow: "hidden",
@@ -64,6 +68,15 @@ const Header = () => {
         transition: "0.4s"
       };
       
+      const orderbutton = {
+        border: "1px solid #3366ff",
+        color: "#3366ff",
+        padding: "7px 10px",
+        width: "80px",
+        marginTop: "15px",
+        transition: "0.4s",
+        marginRight: "10px"
+      };
       const cartbutton = {
         border: "1px solid #fcad35",
         color: "#fcad35",
@@ -73,7 +86,6 @@ const Header = () => {
         transition: "0.4s",
         marginRight: "10px"
       };
-      
       const logoutbutton = {
         border: "1px solid #df2933",
         color: "#df2933",
@@ -121,7 +133,7 @@ const Header = () => {
     };    
     return(        
         <nav className="navbar navbar-expand-lg navbar-dark teal mb-4" style={nav}>
-            <a className="navbar-brand" href="/Home"><img src="/images/logo_new.png" alt="Cloudcart" height="50px" width="200px" className="logo"/>
+            <a className="navbar-brand" href="/Home"><img src="/images/logo_new.png" alt="Cloudcart" height="50px" width="200px" style={{marginTop:"5px"}} className="logo"/>
             </a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
@@ -141,6 +153,19 @@ const Header = () => {
                         onClick={searchs}>   
                         Search
                     </button>
+                    <button
+                    type="button"
+                    className="btn btn-outline-dark"
+                    style={orderbutton}
+                >
+                    <i 
+                        className="fas fa-shopping-bag"
+                        id="order-logo"
+                        data-toggle="modal"
+                        data-target="#oreder"
+                        onClick={order}>
+                    </i>
+              </button>
                     <button
                         type="button"
                         className="btn btn-outline-dark"
