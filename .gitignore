@@ -1,7 +1,7 @@
-node_modules
-details
-others
-server/node_modules
-server/.env
-client/public/uploads
-client/src/components/Paypal.js
+/node_modules
+/details
+/others
+/server/.env
+/client/public/uploads
+client/src/components/*.js
+/server/node_modules

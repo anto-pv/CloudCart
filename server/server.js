@@ -641,7 +641,7 @@ app.post('/api/v1/mail',(req,res) =>{
         secure: true, // true for 465, false for other ports
         auth: {
         user: 'cloudcart421@gmail.com', // generated ethereal user
-        pass: 'Anto@2020', // generated ethereal password
+        pass: dfhzh, // generated ethereal password
         },
         tls:{
             rejectUnauthorized: false

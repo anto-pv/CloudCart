@@ -6,9 +6,6 @@ const FrontPage = () => {
     const login =()=>{
         history.push("/user/login");
     };
-    const register =()=>{
-        history.push("/user/register");
-    };
     const seller =()=>{
         history.push("/shops/login");
     };
@@ -157,9 +154,6 @@ const FrontPage = () => {
                 <p></p>
                 <h1 style={h1}>Book what you need & Get it when you like.</h1>
                 <div style={{marginLeft:"200px"}}>
-                <button className="cmn_btn" style={cmn_btn} onClick={register} id="myBtn">
-                 User  Register
-                </button>{" "}
                 <button className="cmn_btn" style={cmn_btn} onClick={login} id="#login">
                   User Login
                 </button>
