@@ -11,14 +11,34 @@ const Products = ({ products }) => {
     const handleSubmit = async (e, pid) => {
         e.preventDefault()
         try {
+            const item = await ShopFinder.get(`/item/${pid}`);
+            var tcount =item.data.data.carts[0].tcount;
+            if(tcount!=null){
+                tcount=tcount-selectedValue;
+                console.log("18line",tcount);
+                if(tcount<0){
+                    toast.warn("Sorry this much amount of product is not available now, try less")
+                }else{
+                    const cartadd = await ShopFinder.post(`/user/${user}/cart`,{
+                        product: pid,
+                        pcount: selectedValue,
+                        seller: id,
+                        paid: false,
+                        tcount: tcount
+                    });
+                    if(cartadd!=undefined){
+                    toast.success("Product added to cart")}
+                }
+            }else{
             const cartadd = await ShopFinder.post(`/user/${user}/cart`,{
                 product: pid,
                 pcount: selectedValue,
                 seller: id,
                 paid: false,
+                tcount: tcount
             });
             if(cartadd!=undefined){
-            toast.success("Product added to cart")}
+            toast.success("Product added to cart")}};
         } catch(err) {
             console.log(err);
         }; 

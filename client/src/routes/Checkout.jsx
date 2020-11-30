@@ -1,61 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Paypal from '../components/Paypal';
+import ShopFinder from '../apis/ShopFinder';
 const Checkout = () => {
+    const [name, setName] = useState('');
     let history=useHistory();
     let {id,cipher} =useParams();
     var total = ((cipher)/456)-15000;
-    console.log(total,id);
     useEffect(()=>{
         const script = document.createElement("script");
 
     });
-    const paypal =() =>{
-        return(<Paypal/>)
-    };
-    const handleSubmit=()=>{
-        var ele = document.getElementsByName('paymentMethod');    
-            for(var j = 0; j < ele.length; j++) { 
-                if(ele[j].checked) 
-                    var hresult = ele[j].value; 
+    function loadScript(src) {
+        return new Promise((resolve) =>{
+            const script = document.createElement('script');
+            script.src = src
+            script.onload = () => {
+                resolve(true)
             }
-            if(hresult="pcard"){//}
-            }else{
-                return(<div><div className="row">
-                <div className="col-md-6 mb-3">
-                    <label for="cc-name">Name on card</label>
-                    <input type="text" name="card" className="form-control" id="cc-name" placeholder="" required/>
-                    <small className="text-muted">Full name as displayed on card</small>
-                    <div className="invalid-feedback">
-                    Name on card is required
-                    </div>
-                </div>
-                <div className="col-md-6 mb-3">
-                    <label for="cc-number">Credit card number</label>
-                    <input type="text" className="form-control" id="cc-number" placeholder="" required/>
-                    <div className="invalid-feedback">
-                    Credit card number is required
-                    </div>
-                </div>
-            </div>
-            <div className="row">
-            <div className="col-md-3 mb-3">
-                <label for="cc-expiration">Expiration</label>
-                <input type="text" className="form-control" id="cc-expiration" placeholder="" required/>
-                <div className="invalid-feedback">
-                Expiration date required
-                </div>
-            </div>
-            <div className="col-md-3 mb-3">
-                <label for="cc-cvv">CVV</label>
-                <input type="text" className="form-control" id="cc-cvv" placeholder="" required/>
-                <div className="invalid-feedback">
-                Security code required
-                </div>
-            </div>
-            </div></div>);
-            };
+            script.onerror = () =>{
+                resolve(false)
+            }
+            document.body.appendChild(script);
+        })
+    }
+    const __DEV__ = document.domain === 'localhost'
+    async function displayRazorpay(total){
+        const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+        if (!res){
+          toast.warn('Razorpay SDK failed to load. Are you online?');
+          return  
+        }
+        const data = await ShopFinder.post(`/razorpay/${total}`);
+        console.log(typeof(data.data.amount));
+        const options = {
+            key: __DEV__ ? 'rzp_test_qTrwfutHBo5P6Q':'Production key', 
+            amount: data.data.amount.toString(),
+            currency: data.data.currency,
+            name: "Cloud Cart",
+            description: "Test Transaction",
+            image: "/images/logo_new.png",
+            order_id: data.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            handler: function (response){
+                toast.error(response.razorpay_payment_id);
+                toast.error(response.razorpay_order_id);
+                toast.error(response.razorpay_signature)
+            },
+            prefill: {
+                name: name
+            },
+            notes: {
+                address: "Razorpay Corporate Office"
+            },
+            theme: {
+                color: "#3399cc"
+            }
+        };
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+        paymentObject.on('payment.failed', function (response){
+            toast.error(response.error.code);
+            toast.error(response.error.description);
+            toast.error(response.error.source);
+            toast.error(response.error.step);
+            toast.error(response.error.reason);
+            toast.error(response.error.metadata.order_id);
+            toast.error(response.error.metadata.payment_id);
+    });
     };
     return (
         <div className="bg-light">
@@ -90,11 +101,11 @@ const Checkout = () => {
                     </div>
                     <div className="col-md-8 order-md-1">
                         <h4 className="mb-3">Billing address</h4>
-                        <form className="needs-validation" novalidate>
+                        <form className="needs-validation" noValidate>
                             <div className="row">
                                 <div className="col-md-6 mb-3">
                                     <label htmlFor="firstName">First name</label>
-                                    <input type="text" className="form-control" id="firstName" placeholder="First name" required/>
+                                    <input type="text" value={name} onChange={e=>setName(e.target.value)} className="form-control" id="firstName" placeholder="First name" required/>
                                     <div className="invalid-feedback">
                                     Valid first name is required.
                                     </div>
@@ -114,26 +125,13 @@ const Checkout = () => {
                                 Please enter a valid email address for shipping updates.
                                 </div>
                             </div>
-                            <hr className="mb-4"/>         
-                            <h4 className="mb-3">Payment</h4>
-                            <div className="d-block my-3">
-                                <div className="custom-control custom-radio">
-                                    <input id="debit" name="paymentMethod" value="dcard" type="radio" className="custom-control-input" required/>
-                                    <label className="custom-control-label" for="debit">UPI</label>
-                                </div>
-                                <div className="custom-control custom-radio">
-                                    <input id="paypal" name="paymentMethod" value="pcard" type="radio" className="custom-control-input" required/>
-                                    <label className="custom-control-label" for="paypal">PayPal</label>
-                                </div>
-                            </div>
-                            {handleSubmit()}
                             <hr className="mb-4"/>
-                            <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={paypal}>Continue to checkout</button>
+                            <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={displayRazorpay(total)}>Continue to checkout</button>
                         </form>
                     </div>
                 </div>     
                 <footer className="my-5 pt-5 text-muted text-center text-small">
-                    <p className="mb-1">&copy; 2017-2020 Company Name</p>
+                    <p className="mb-1">&copy; 2020-2021 CloudCart</p>
                     <ul className="list-inline">
                         <li className="list-inline-item"><a href="#">Privacy</a></li>
                         <li className="list-inline-item"><a href="#">Terms</a></li>

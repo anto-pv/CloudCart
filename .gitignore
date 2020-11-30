@@ -3,5 +3,5 @@
 /others
 /server/.env
 /client/public/uploads
-client/src/components/*.js
+/client/src/components/*.js
 /server/node_modules

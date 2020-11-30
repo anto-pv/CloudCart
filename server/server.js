@@ -5,7 +5,13 @@ const db = require("./db");
 const path = require('path');
 const fileUpload = require('express-fileupload');
 const nodemailer = require('nodemailer');
+const Razorpay = require('razorpay');
+const shortid = require('shortid');
 const app = express();
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_qTrwfutHBo5P6Q',
+    key_secret: process.env.Razorpaysec
+});
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
@@ -335,11 +341,14 @@ app.post("/api/v1/shops/:id/add", async (req,res) => {
     try {const resu = await db.query(`SELECT name FROM seller WHERE id=${req.params.id}`);
     if(req.body.producttime==''){
         req.body.producttime=null;
-    };    
+    };
+    if(req.body.productcount==''){
+        req.body.productcount=null;
+    };
     req.body.name=(req.body.name).toUpperCase();
         const results = await db.query(
-            `INSERT INTO product (imgname,name, detail, sellername, price, producttime, seller, live) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,TRUE) returning *`,
-            [req.body.name, req.body.detail,resu.rows[0].name, req.body.price, req.body.producttime, req.params.id]);
+            `INSERT INTO product (imgname,name, detail, sellername, price, producttime, seller, live, tcount) values('no-image-available-icon.jpg',$1, $2, $3, $4, $5, $6,TRUE,$7) returning *`,
+            [req.body.name, req.body.detail,resu.rows[0].name, req.body.price, req.body.producttime, req.params.id,req.body.productcount]);
         res.status(201).json({
             status: "success",
             data: {
@@ -354,7 +363,11 @@ app.post("/api/v1/shops/:id/add", async (req,res) => {
 app.put("/api/v1/product/update/add/:id", async(req,res) =>{
     try{console.log("Updating");
     req.body.name=(req.body.name).toUpperCase();
-        const results = await db.query(`UPDATE product SET name=$1, price= $2, producttime= $3,live=$4 where id=$5 returning *`, [req.body.name,req.body.price, req.body.producttime, req.body.live, req.params.id]);
+    if(req.body.productcount==0){
+        req.body.live=false;
+    }
+    console.log(req.body.productcount,req.body.live);
+        const results = await db.query(`UPDATE product SET name=$1, price= $2, producttime= $3,live=$4, tcount=$6 where id=$5 returning *`, [req.body.name,req.body.price, req.body.producttime, req.body.live, req.params.id, req.body.productcount]);
         res.status(200).json({
             status: "success",
             data:{
@@ -594,21 +607,73 @@ app.get("/api/v1/seller/:id/order", async (req,res) =>{
         console.log(err);
     };
 });
-//add to cart 
-app.post("/api/v1/user/:id/cart", async (req,res) => {
-    try {
-        const results = await db.query(
-            `INSERT INTO cart (cuser, product, pcount, seller, paid) values($1, $2, $3, $4, $5) returning *`,
-            [req.params.id, req.body.product, req.body.pcount, req.body.seller, req.body.paid]);
-        res.status(201).json({
+//add to cart
+app.get("/api/v1/item/:id", async (req,res)=>{
+    try{
+        const results = await db.query(`SELECT * FROM product WHERE id=${req.params.id}`);
+        res.status(200).json({
             status: "success",
             data: {
-                cart: results.rows[0],
+                carts: results.rows,
             },
         });
     }catch(err){
         console.log(err);
+    };
+});
+app.post("/api/v1/user/:id/cart", async (req,res) => {
+    try {
+        if(req.body.tcount==null){
+            const results = await db.query(
+                `INSERT INTO cart (cuser, product, pcount, seller, paid) values($1, $2, $3, $4, $5) returning *`,
+                [req.params.id, req.body.product, req.body.pcount, req.body.seller, req.body.paid]);
+            res.status(201).json({
+                status: "success",
+                data: {
+                    cart: results.rows[0],
+                },
+            });
+        }
+        else{
+        if(req.body.tcount==0){
+        var live=false;
+    }else{
+        var live=true;
     }
+    console.log(req.body.productcount,req.body.live);
+        const results = await db.query(`UPDATE product SET live=$1, tcount=$2 where id=$3 returning *`, [live,req.body.tcount, req.body.product]);
+        res.status(200).json({
+            status: "success",
+            data:{
+                product: results.rows[0],
+            },
+        });};
+    }catch(err){
+        console.log(err);
+    }
+});
+app.post("/api/v1/razorpay/:total", async(req, res) => {
+    const payment_capture = 1
+    const amount = req.params.total;
+    const currency = 'INR'
+    const options = {
+        amount: (amount * 100).toString(),
+        currency,
+        receipt: shortid.generate(),
+        payment_capture
+    }
+    console.log(amount,typeof(amount));
+    try {
+        const response = await razorpay.orders.create(options)
+        console.log(response)
+        res.json({
+            id: response.id,
+            currency: response.currency,
+            amount: response.amount
+        })
+    } catch (err) {
+        console.log(err);
+    };
 });
 // Delete Product
 

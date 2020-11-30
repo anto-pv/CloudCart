@@ -11,6 +11,7 @@ const UpdateProduct = () => {
     const [detail, setDetail] = useState('');
     const [price, setPrice] = useState('');
     const [producttime, setProducttime] = useState('');
+    const [productcount, setProductcount] = useState('');
     const [live, setLive] = useState('');
     useEffect(() =>{
         const fetchData = async() =>{
@@ -22,12 +23,16 @@ const UpdateProduct = () => {
             setDetail(response.data.data.product[0].detail);
             setProducttime(response.data.data.product[0].producttime);
             setLive(response.data.data.product[0].live);
+            setProductcount(response.data.data.product[0].tcount);
         };
         fetchData();
     },[]);
     const handleSubmit = async (e) => {
         const formData = new FormData();
         formData.append('file',file);
+        if(productcount<0 && productcount!=''){
+            toast.warn('Enter count Zero or more:')
+        }else{
         try{
             const res = await ShopFinder.put(`/products/${id}/upload`, formData,{
                 headers:{
@@ -48,13 +53,14 @@ const UpdateProduct = () => {
                 price,
                 detail,
                 producttime,
+                productcount,
                 live
             });
             console.log(UpdateRestaurant);
         } catch(err) {
             console.log(err);
-        };
-        history.push("/shops/Dash");
+        };history.push("/shops/Dash");
+    };  
     };
     const mainHeader = {width: "100%",
     maxWidth: "100%",
@@ -138,7 +144,11 @@ const UpdateProduct = () => {
             </div>
             <div className="form-group" style={formGroup}>
                 <label htmlFor="producttime">Product Time (if it takes time to product be ready)</label>
-                <input value={producttime} onChange={e =>setDetail(e.target.value)} id="detail" className="form-control" style={formControl} type="time"/>
+                <input value={producttime} onChange={e =>setProducttime(e.target.value)} id="time" className="form-control" style={formControl} type="time"/>
+            </div>
+            <div className="form-group" style={formGroup}>
+                <label htmlFor="productcount">Product Count (if the product is limited)</label>
+                <input value={productcount} onChange={e =>setProductcount(e.target.value)} id="count" className="form-control" style={formControl} type="number"/>
             </div>
             <div className="form-group" style={formGroup}>
                 <label htmlFor="price">Price</label>
