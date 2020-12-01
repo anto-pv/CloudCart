@@ -450,7 +450,7 @@ app.put("/api/v1/user/:id/cart/:sid", async(req,res) =>{
     try{console.log("gee");
         const loc = await db.query(`select location from seller where id=${req.params.sid}`);
         console.log(loc,req.params.id,req.params.sid);
-        const results = await db.query(`select c.slot,producttime,servicetime from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc.rows[0].location]);
+        const results = await db.query(`select c.slot,producttime,servicetime,s.location,p.name from cart c left join product p  on c.product=p.id left join seller s on c.seller=s.id where c.cuser=$1 and c.slot is not null and s.location=$2`, [req.params.id, loc.rows[0].location]);
         let unique_array = []
         console.log(results.rows);
         for(let i = 0;i < results.rows.length; i++){
@@ -623,7 +623,6 @@ app.get("/api/v1/item/:id", async (req,res)=>{
 });
 app.post("/api/v1/user/:id/cart", async (req,res) => {
     try {
-        if(req.body.tcount==null){
             const results = await db.query(
                 `INSERT INTO cart (cuser, product, pcount, seller, paid) values($1, $2, $3, $4, $5) returning *`,
                 [req.params.id, req.body.product, req.body.pcount, req.body.seller, req.body.paid]);
@@ -633,14 +632,13 @@ app.post("/api/v1/user/:id/cart", async (req,res) => {
                     cart: results.rows[0],
                 },
             });
-        }
-        else{
+        if(req.body.tcount!=null){
         if(req.body.tcount==0){
         var live=false;
     }else{
         var live=true;
     }
-    console.log(req.body.productcount,req.body.live);
+    console.log("changing live to sold out",req.body.pcount,live);
         const results = await db.query(`UPDATE product SET live=$1, tcount=$2 where id=$3 returning *`, [live,req.body.tcount, req.body.product]);
         res.status(200).json({
             status: "success",
