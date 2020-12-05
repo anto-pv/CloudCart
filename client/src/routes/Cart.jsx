@@ -295,7 +295,6 @@ const Cart = () => {
                                         return(
                                             <tr key={cart.cid}>
                                             <td style={shop__cart__table.tbody.tr.cart__product__item}>
-                                                <img src="" alt=""/>
                                                 <div style={shop__cart__table.tbody.tr.cart__product__item.cart__product__item__title}>
                                                     <h4>{cart.name}</h4>
                                         <h6>{cart.sellername}</h6>

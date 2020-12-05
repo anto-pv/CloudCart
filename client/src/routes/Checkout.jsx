@@ -118,13 +118,6 @@ const Checkout = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="email">Email <span className="text-muted">(Optional)</span></label>
-                                <input type="email" className="form-control" id="email" placeholder="you@example.com"/>
-                                <div className="invalid-feedback">
-                                Please enter a valid email address for shipping updates.
-                                </div>
-                            </div>
                             <hr className="mb-4"/>
                             <button className="btn btn-primary btn-lg btn-block" type="submit" onClick={displayRazorpay(total)}>Continue to checkout</button>
                         </form>
