@@ -9,7 +9,5 @@ You can watch the preview in :heart_eyes: :<br>
 https://anto-pv.github.io/CloudCart-Preview/
 <br>
 ##Stack used:
-![express](https://assets.toptal.io/uploads/blog/category/logo/25/express_js.png)
-![react](https://th.bing.com/th/id/OIP.2xAxsEndE-dkv-oxJIlCaAAAAA?pid=Api&rs)
-![node](https://th.bing.com/th/id/OIP.Yhe1R94CIotr2se7Wf6TQQAAAA?pid=Api&rs=1)
-##Databse Used::elephant::elephant::elephant::elephant::elephant:
+![pern](https://sitepoint.us/img/coupons/pern-stack-build-a-yelp-clone-postgresexpressreactnode.png)
+##Databse :elephant::elephant::elephant::elephant::elephant:
