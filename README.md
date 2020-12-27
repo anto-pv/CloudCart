@@ -33,9 +33,10 @@ npm install```</li>
 ```bash
 npm install```</li><li>In terminal 1:
 ```bash
-npm start```</li><li>In terminal 1:
+npm start```</li><li>In terminal 2:
 ```bash
-npm start```</li></ul></li></ol>
+npm start
+```</li></ul></li></ol>
 
 ## Stack used:
 
