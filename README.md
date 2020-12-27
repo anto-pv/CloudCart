@@ -12,31 +12,27 @@ You can watch the preview in :heart_eyes: [Here](https://anto-pv.github.io/Cloud
 git clone https://github.com/anto-pv/CloudCart.git
 </li>
 <li>Open server folder, add new file .env and open .env and add these:
-<br>PORT= #port number for server<br>	
-PGUSER= #postgres database name default 'postgres'	<br>
-PGHOST=localhost<br>	
-PGPASSWORD= #database password	<br>
-PGDATABASE= #your database name for this project<br>
-PGPORT=#postgres installation port default '5432'<br>
+<br>
+```javascript
+PORT= #port number for server
+PGUSER= #postgres database name default 'postgres'
+PGHOST=localhost
+PGPASSWORD= #database password
+PGDATABASE= #your database name for this project
+PGPORT=#postgres installation port default '5432'
 Razorpaysec=#Razorpay key for payment if have
+```
 </li><li>add this .env file to .gitignore</li><li><ul>split terminal
 <li>In terminal 1:
-```bash
-cd server```</li>
+`cd server`</li>
 <li>In terminal 2:
-`
-cd client`</li>
+`cd client`</li>
 <li>In terminal 1:
-`powershell
-npm install`</li>
+`npm install`</li>
 <li>In terminal 2:
-```bash
-npm install```</li><li>In terminal 1:
-```bash
-npm start```</li><li>In terminal 2:
-```bash
-npm start
-```</li></ul></li></ol>
+`npm install`</li><li>In terminal 1:
+`npm start`</li><li>In terminal 2:
+`npm start`</li></ul></li></ol>
 
 ## Stack used:
 
