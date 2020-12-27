@@ -27,19 +27,14 @@ Razorpaysec=#Razorpay key for payment if have
 </li><li>add this .env file to .gitignore</li><li>split terminal
 
 - In terminal 1:
-
 `cd server`
 - In terminal 2:
-
 `cd client`
 - In terminal 1:
-
 `npm install`
 - In terminal 2:
-
 `npm install`
 - In terminal 1:
-
 `npm start`
 - In terminal 2:
 `npm start`</li></ol>
