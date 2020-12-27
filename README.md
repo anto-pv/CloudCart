@@ -11,6 +11,7 @@ You can watch the preview in :heart_eyes: [Here](https://anto-pv.github.io/Cloud
 <li>
 git clone https://github.com/anto-pv/CloudCart.git
 </li>
+<li>Create new database in postgres and add the 'insert queries' in sql files in the database folder</li>
 <li>Open server folder, add new file .env and open .env and add these:
 <br>
 
