@@ -24,18 +24,25 @@ PGDATABASE= #your database name for this project
 PGPORT=#postgres installation port default '5432'
 Razorpaysec=#Razorpay key for payment if have
 ```
-</li><li>add this .env file to .gitignore</li><li><ul>split terminal
-<li>In terminal 1:
-````cd server````</li>
-<li>In terminal 2:
+</li><li>add this .env file to .gitignore</li><li>split terminal
 
-`cd client`</li>
-<li>In terminal 1:
-`npm install`</li>
-<li>In terminal 2:
-`npm install`</li><li>In terminal 1:
-`npm start`</li><li>In terminal 2:
-`npm start`</li></ul></li></ol>
+- In terminal 1:
+
+`cd server`
+- In terminal 2:
+
+`cd client`
+- In terminal 1:
+
+`npm install`
+- In terminal 2:
+
+`npm install`
+- In terminal 1:
+
+`npm start`
+- In terminal 2:
+`npm start`</li></ol>
 
 ## Stack used:
 
