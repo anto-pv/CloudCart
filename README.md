@@ -24,11 +24,11 @@ Razorpaysec=#Razorpay key for payment if have
 ```bash
 cd server```</li>
 <li>In terminal 2:
-```bash
-cd client```</li>
+`
+cd client`</li>
 <li>In terminal 1:
-```bash
-npm install```</li>
+`powershell
+npm install`</li>
 <li>In terminal 2:
 ```bash
 npm install```</li><li>In terminal 1:
