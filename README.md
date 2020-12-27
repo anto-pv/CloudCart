@@ -13,7 +13,7 @@ git clone https://github.com/anto-pv/CloudCart.git
 </li>
 <li>Open server folder, add new file .env and open .env and add these:
 <br>
-```javascript
+````javascript
 PORT= #port number for server
 PGUSER= #postgres database name default 'postgres'
 PGHOST=localhost
@@ -21,10 +21,10 @@ PGPASSWORD= #database password
 PGDATABASE= #your database name for this project
 PGPORT=#postgres installation port default '5432'
 Razorpaysec=#Razorpay key for payment if have
-```
+````
 </li><li>add this .env file to .gitignore</li><li><ul>split terminal
 <li>In terminal 1:
-`cd server`</li>
+````cd server```s`</li>
 <li>In terminal 2:
 `cd client`</li>
 <li>In terminal 1:
